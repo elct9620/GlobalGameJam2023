@@ -1,0 +1,47 @@
+{"frames": {
+
+"chicken-0.png":
+{
+	"frame": {"x":34,"y":1,"w":29,"h":40},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":14,"w":29,"h":40},
+	"sourceSize": {"w":64,"h":64}
+},
+"chicken-1.png":
+{
+	"frame": {"x":1,"y":1,"w":31,"h":39},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":15,"w":31,"h":39},
+	"sourceSize": {"w":64,"h":64}
+},
+"chicken-2.png":
+{
+	"frame": {"x":33,"y":43,"w":30,"h":37},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":17,"w":30,"h":37},
+	"sourceSize": {"w":64,"h":64}
+},
+"chicken-3.png":
+{
+	"frame": {"x":1,"y":42,"w":30,"h":39},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":15,"w":30,"h":39},
+	"sourceSize": {"w":64,"h":64}
+}},
+"animations": {
+	"chicken": ["chicken-0.png","chicken-1.png","chicken-2.png","chicken-3.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "a.png",
+	"format": "RGBA8888",
+	"size": {"w":64,"h":82},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:8a8a4dc769b63f373dcd61b9a2916787:da894e0dda43777c87d98b7fe9e45adb:bf9645bc287ef85d0bf835d4803a79ae$"
+}
+}
