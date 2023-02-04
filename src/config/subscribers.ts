@@ -14,3 +14,8 @@ Container.bind<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscri
 Container.get<Subject<events.GameCreatedEvent>>(types.GameCreatedEvent).subscribe(
   Container.resolve<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber)
 )
+
+Container.bind<subscribers.InputSubscriber>(subscribers.InputSubscriber).to(subscribers.InputSubscriber)
+Container.get<Subject<events.KeyboardEvent>>(types.KeyboardEvent).subscribe(
+  Container.resolve<subscribers.InputSubscriber>(subscribers.InputSubscriber)
+)
