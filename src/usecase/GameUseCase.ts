@@ -65,7 +65,7 @@ export class GameUseCase {
       const track = this.trackRepo.Find(game.currentTrackID)
       let spawnCount = 0
       track.notes.forEach(note => {
-        const idx = game.spawn(note)
+        const idx = game.spawn(note.time)
         this.gameRepo.CommitSpawn(game, idx)
         spawnCount++
       })

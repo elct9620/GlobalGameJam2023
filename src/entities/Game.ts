@@ -60,8 +60,8 @@ export class Game {
     this._currentTrackID = id
   }
 
-  spawn(enemy: Enemy): number {
-    this._enemies.push(enemy)
+  spawn(time: number): number {
+    this._enemies.push(new Enemy(time))
     return this._enemies.length - 1
   }
 }

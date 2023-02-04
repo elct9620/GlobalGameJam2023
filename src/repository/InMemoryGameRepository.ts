@@ -51,4 +51,7 @@ export class InMemoryGameRepository implements IGameRepository {
         break
     }
   }
+
+  CommitSpawn(_game: Game, _idx: number) {
+  }
 }
