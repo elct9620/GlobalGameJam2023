@@ -2,9 +2,10 @@ import * as PIXI from 'pixi.js';
 
 import './style.css';
 
-const app = new PIXI.Application({
+new PIXI.Application({
+  view: document.getElementById("view") as HTMLCanvasElement,
   resizeTo: window,
-  resolution: devicePixelRatio,
-  background: '#FFFFFF',
+  resolution: devicePixelRatio || 1,
+  autoDensity: true,
+  background: '#000000',
 });
-document.body.appendChild(app.view as unknown as Node);
