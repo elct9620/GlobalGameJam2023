@@ -7,9 +7,13 @@ import gsap from 'gsap'
 
 import { BaseScene } from './BaseScene'
 import { GameUseCase } from '../usecase'
-import { GameStartedEvent } from '../events'
+import {
+  GameStartedEvent,
+  GameHitEvent,
+} from '../events'
 import {
   GameStartedEvent as GameStartedEventType,
+  GameHitEvent as GameHitEventType,
 } from '../types'
 
 import bgImg from '@/assets/bg.jpg';
@@ -57,17 +61,21 @@ export class GameScene extends BaseScene {
   private started: boolean = false;
 
   private _onGameStarted?: Subscription
+  private _onGameHit?: Subscription
 
   private readonly usecase: GameUseCase;
   private readonly evtGameStarted: Subject<GameStartedEvent>
+  private readonly evtGameHit: Subject<GameHitEvent>
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
-    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>
+    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
+    @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
   ) {
     super()
     this.usecase = usecase
     this.evtGameStarted = evtGameStarted
+    this.evtGameHit = evtGameHit
   }
 
   onCreated = () => {
@@ -162,19 +170,12 @@ export class GameScene extends BaseScene {
     this.root.loop = false;
     this.addChild(this.root)
 
-    this.evtGameStarted.subscribe(() => {
+    this._onGameStarted = this.evtGameStarted.subscribe(() => {
       this.started = true
       this.currentNoteIndex = 0
       this.bgm?.start()
     })
-
-    document.body.addEventListener('keydown', event => {
-      if (event.keyCode === 32) { // space key
-        if (this.started && this.root) {
-          this.root.gotoAndPlay(0)
-        }
-      }
-    })
+    this.evtGameHit.subscribe(() => this.root?.gotoAndPlay(0))
   }
 
   onUpdate = (delta: number) => {
@@ -197,7 +198,8 @@ export class GameScene extends BaseScene {
   }
 
   onDestroyed = () => {
-    if(this._onGameStarted) this._onGameStarted.unsubscribe()
+    this._onGameStarted?.unsubscribe()
+    this._onGameHit?.unsubscribe()
   }
 }
 

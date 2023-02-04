@@ -1,8 +1,10 @@
+import { Subject } from 'rxjs'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 import * as uuid from 'uuid';
 
 import type { IGameRepository } from '../repository'
+import { GameHitEvent } from '../events'
 import * as types from '../types'
 
 export type HitResult = {
@@ -11,12 +13,15 @@ export type HitResult = {
 
 @injectable()
 export class GameUseCase {
-  private readonly repo: IGameRepository;
+  private readonly repo: IGameRepository
+  private readonly evtGameHit: Subject<GameHitEvent>
 
   constructor(
-    @inject(types.IGameRepository) repo: IGameRepository
+    @inject(types.IGameRepository) repo: IGameRepository,
+    @inject(types.GameHitEvent) evtGameHit: Subject<GameHitEvent>
   ) {
     this.repo = repo
+    this.evtGameHit = evtGameHit
   }
 
   CreateGame(): string {
@@ -40,6 +45,7 @@ export class GameUseCase {
     }
 
     if(game?.canAction) {
+      this.evtGameHit.next({ id })
       return { type: 'action' }
     }
 

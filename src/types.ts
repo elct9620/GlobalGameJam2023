@@ -5,6 +5,7 @@ export const PlayerID = Symbol('PlayerID')
 export const TickEvent = Symbol('TickEvent')
 export const GameCreatedEvent = Symbol('GameCreatedEvent')
 export const GameStartedEvent = Symbol('GameStartedEvent')
+export const GameHitEvent = Symbol('GameHitEvent')
 export const KeyboardEvent = Symbol('KeyboardEvent')
 
 // Repository

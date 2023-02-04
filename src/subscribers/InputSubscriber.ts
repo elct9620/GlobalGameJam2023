@@ -21,7 +21,7 @@ export class InputSubscriber implements Observer<KeyboardEvent> {
   }
 
   next(event: KeyboardEvent) {
-    if(InputSubscriber.ALLOW_KEYS.includes(event.key)) {
+    if(InputSubscriber.ALLOW_KEYS.includes(event.key) && event.pressed) {
       const id = this.session.CurrentGameID()
       if(id) {
         this.game.Hit(id)

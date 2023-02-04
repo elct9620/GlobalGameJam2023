@@ -5,3 +5,7 @@ export type GameCreatedEvent = {
 export type GameStartedEvent = {
   id: string
 }
+
+export type GameHitEvent = {
+  id: string
+}
