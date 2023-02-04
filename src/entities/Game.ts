@@ -22,6 +22,10 @@ export class Game {
     return this._state
   }
 
+  get enemies(): Enemy[] {
+    return [...this._enemies]
+  }
+
   get currentTrackID(): string | undefined {
     return this._currentTrackID
   }

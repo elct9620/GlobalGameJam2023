@@ -60,7 +60,8 @@ export class InMemoryGameRepository implements IGameRepository {
     }
   }
 
-  CommitSpawn(_game: Game, index: number) {
-    this.evtSpawnChicken.next({ index, position: {x: 0, y: 0} })
+  CommitSpawn(game: Game, index: number) {
+    const enemy = game.enemies[index]
+    this.evtSpawnChicken.next({ index, position: enemy.toPosition() })
   }
 }
