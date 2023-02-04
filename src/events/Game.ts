@@ -10,6 +10,11 @@ export type GameHitEvent = {
   id: string
 }
 
+export type SpawnChickenEvent = {
+  index: number
+  position: number[]
+}
+
 type Note = {
   time: number
 }
