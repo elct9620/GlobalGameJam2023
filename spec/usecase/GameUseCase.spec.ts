@@ -63,4 +63,15 @@ describe('spawn', () => {
     ctx.usecase.SetTrack(id, 'Music.mid')
     expect(ctx.usecase.SpawnChicken(id)).toBe(0)
   })
+
+  describe('when track has note', () => {
+    it<GameUseCaseContext>('is expected to be 2', (ctx) => {
+      const track = Container.resolve<TrackUseCase>(TrackUseCase)
+      track.Load('Music.mid', [{ time: 0 }, { time: 100 }])
+
+      const id = ctx.usecase.CreateGame()
+      ctx.usecase.SetTrack(id, 'Music.mid')
+      expect(ctx.usecase.SpawnChicken(id)).toBe(2)
+    })
+  })
 })

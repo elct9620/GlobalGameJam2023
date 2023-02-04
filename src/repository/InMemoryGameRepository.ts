@@ -4,10 +4,15 @@ import 'reflect-metadata';
 
 import { IGameRepository } from './IGameRepository'
 import { Game, GameState } from '../entities'
-import { GameCreatedEvent, GameStartedEvent } from '../events'
+import {
+  GameCreatedEvent,
+  GameStartedEvent,
+  SpawnChickenEvent,
+} from '../events'
 import {
   GameCreatedEvent as GameCreatedEventType,
   GameStartedEvent as GameStartedEventType,
+  SpawnChickenEvent as SpawnChickenEventType,
 } from '../types'
 
 type GameCollection = { [key: string]: Game }
@@ -17,13 +22,16 @@ export class InMemoryGameRepository implements IGameRepository {
   private collection: GameCollection = {}
   private readonly evtGameCreated: Subject<GameCreatedEvent>
   private readonly evtGameStarted: Subject<GameStartedEvent>
+  private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
     @inject(GameCreatedEventType) evtGameCreated: Subject<GameCreatedEvent>,
-    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>
+    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
+    @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
     this.evtGameCreated = evtGameCreated
     this.evtGameStarted = evtGameStarted
+    this.evtSpawnChicken = evtSpawnChicken
   }
 
   Find(id: string): Game {
@@ -52,6 +60,7 @@ export class InMemoryGameRepository implements IGameRepository {
     }
   }
 
-  CommitSpawn(_game: Game, _idx: number) {
+  CommitSpawn(_game: Game, index: number) {
+    this.evtSpawnChicken.next({ index, position: {x: 0, y: 0} })
   }
 }
