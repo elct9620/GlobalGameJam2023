@@ -4,8 +4,11 @@ import 'reflect-metadata';
 import Container from './container'
 
 export interface IScene extends PIXI.Container {
-  load(): void
-  unload(): void
+  readonly assets: string[]
+
+  onLoaded(): void
+  onCreated(): void
+  onDestroyed(): void
 }
 
 interface SceneConstructor {
@@ -33,18 +36,26 @@ export default class Manager {
     this.scenes[id] = scene
   }
 
-  to(id: string) {
+  async to(id: string) {
     const nextScene = this.scenes[id]
     if(!nextScene) { return; }
 
     const scene = Container.resolve<IScene>(nextScene)
+    scene.onCreated()
+
     if(this.currentScene) {
       this.app.stage.removeChild(this.currentScene)
-      this.currentScene.unload()
+      this.currentScene.onDestroyed()
     }
 
-    scene.load()
+    await PIXI.Assets.backgroundLoad(scene.assets)
+
     this.app.stage.addChild(scene)
     this.currentScene = scene
+    this.currentScene.onLoaded()
+
+    if(import.meta.env.DEV) {
+      console.info('Loaded Scene:', this.currentScene.constructor.name)
+    }
   }
 }
