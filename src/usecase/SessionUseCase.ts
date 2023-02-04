@@ -30,4 +30,13 @@ export class SessionUseCase {
 
     return player.currentGameID
   }
+
+  StartGame(id: string) {
+    const player = this.repo.Find(this.playerID)
+    if(!player) {
+      throw Error('player not found')
+    }
+
+    player.startGame(id)
+  }
 }

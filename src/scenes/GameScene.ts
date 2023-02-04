@@ -1,9 +1,11 @@
-import { BaseScene } from './BaseScene'
-import { injectable } from 'inversify'
+import { inject, injectable } from 'inversify'
 import * as PIXI from 'pixi.js'
 import MidiParser from 'midi-parser-js'
 import 'reflect-metadata'
 import gsap from 'gsap'
+
+import { BaseScene } from './BaseScene'
+import { GameUseCase } from '../usecase'
 
 import bgImg from '@/assets/bg.jpg';
 import groundImg from '@/assets/ground.png';
@@ -35,6 +37,19 @@ export class GameScene extends BaseScene {
   private bgm?: AudioBufferSourceNode;
   private notes?: Note[]
   private startTime?: number;
+
+  private readonly usecase: GameUseCase;
+
+  constructor(
+    @inject(GameUseCase) usecase: GameUseCase
+  ) {
+    super()
+    this.usecase = usecase
+  }
+
+  onCreated = () => {
+    this.usecase.CreateGame()
+  }
 
   onPreLoad = async () => {
     this.audioContext = new AudioContext();
