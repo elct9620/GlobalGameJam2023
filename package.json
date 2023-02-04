@@ -8,11 +8,13 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "watch": "tsc --watch --noEmit",
+    "watch-test": "vitest --watch --ui",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@vitest/coverage-c8": "^0.28.4",
+    "@vitest/ui": "^0.28.4",
     "typescript": "^4.9.3",
     "vite": "^4.1.0",
     "vitest": "^0.28.4"
