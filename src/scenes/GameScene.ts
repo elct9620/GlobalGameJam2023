@@ -10,11 +10,13 @@ import { GameUseCase } from '../usecase'
 import {
   GameStartedEvent,
   GameHitEvent,
+  SpawnChickenEvent,
   LoadTrackEvent,
 } from '../events'
 import {
   GameStartedEvent as GameStartedEventType,
   GameHitEvent as GameHitEventType,
+  SpawnChickenEvent as SpawnChickenEventType,
   LoadTrackEvent as LoadTrackEventType,
 } from '../types'
 
@@ -80,22 +82,26 @@ export class GameScene extends BaseScene {
 
   private _onGameStarted?: Subscription
   private _onGameHit?: Subscription
+  private _onSpawnChicken?: Subscription
 
   private readonly usecase: GameUseCase;
   private readonly evtGameStarted: Subject<GameStartedEvent>
   private readonly evtGameHit: Subject<GameHitEvent>
+  private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
   private readonly evtLoadTrack: Subject<LoadTrackEvent>
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
     @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
     @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
+    @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
     @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
   ) {
     super()
     this.usecase = usecase
     this.evtGameStarted = evtGameStarted
     this.evtGameHit = evtGameHit
+    this.evtSpawnChicken = evtSpawnChicken
     this.evtLoadTrack = evtLoadTrack
   }
 
@@ -160,21 +166,29 @@ export class GameScene extends BaseScene {
     this.addChild(cloud3)
 
     this.chickenContainer = new PIXI.Container()
-    this.notes?.forEach(note => {
-      const chicken = new PIXI.AnimatedSprite([
-	PIXI.Texture.from(chickenImg0),
-	PIXI.Texture.from(chickenImg1),
-	PIXI.Texture.from(chickenImg2),
-      ])
-      chicken.scale.set(0.5, 0.5)
-      chicken.position.set(note.time * 0.1 * TRACK_SCALE, 0)
-      chicken.animationSpeed = 0.25;
-      chicken.play();
-      note.chicken = chicken
-      this.chickenContainer?.addChild(chicken)
-    })
     this.chickenContainer.position.set(200, 260);
     this.addChild(this.chickenContainer)
+
+    this._onSpawnChicken = this.evtSpawnChicken.subscribe(evt => {
+      const chicken = new PIXI.AnimatedSprite([
+        PIXI.Texture.from(chickenImg0),
+        PIXI.Texture.from(chickenImg1),
+        PIXI.Texture.from(chickenImg2),
+      ])
+      chicken.scale.set(0.5, 0.5)
+      chicken.position.set(evt.position.x, evt.position.y)
+      chicken.animationSpeed = 0.25;
+      chicken.play();
+
+      if(this.notes) {
+        const note = this.notes[evt.index]
+        if (note) {
+          note.chicken = chicken
+        }
+      }
+
+      this.chickenContainer?.addChild(chicken)
+    })
 
     this.root = new PIXI.AnimatedSprite([
       PIXI.Texture.from(rootImg0),
@@ -280,6 +294,7 @@ export class GameScene extends BaseScene {
   onDestroyed = () => {
     this._onGameStarted?.unsubscribe()
     this._onGameHit?.unsubscribe()
+    this._onSpawnChicken?.unsubscribe()
   }
 }
 
