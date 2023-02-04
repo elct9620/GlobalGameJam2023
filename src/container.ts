@@ -28,5 +28,6 @@ container.bind<repo.ITrackRepository>(types.ITrackRepository).to(repo.InMemoryTr
 // UseCase
 container.bind<usecase.GameUseCase>(usecase.GameUseCase).to(usecase.GameUseCase)
 container.bind<usecase.SessionUseCase>(usecase.SessionUseCase).to(usecase.SessionUseCase)
+container.bind<usecase.TrackUseCase>(usecase.TrackUseCase).to(usecase.TrackUseCase)
 
 export default container

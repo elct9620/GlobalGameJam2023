@@ -3,24 +3,28 @@ import 'reflect-metadata'
 import { Observer } from 'rxjs'
 
 import { LoadTrackEvent } from '../events'
-import { GameUseCase, SessionUseCase } from '../usecase'
+import { GameUseCase, SessionUseCase, TrackUseCase } from '../usecase'
 
 @injectable()
 export class LoadTrackSubscriber implements Observer<LoadTrackEvent> {
   private readonly game: GameUseCase
   private readonly session: SessionUseCase;
+  private readonly track: TrackUseCase
 
   constructor(
     @inject(GameUseCase) game: GameUseCase,
-    @inject(SessionUseCase) session: SessionUseCase
+    @inject(SessionUseCase) session: SessionUseCase,
+    @inject(TrackUseCase) track: TrackUseCase,
   ) {
     this.game = game
     this.session = session
+    this.track = track
   }
 
   next(event: LoadTrackEvent) {
     const id = this.session.CurrentGameID()
     if(id) {
+      this.track.Load(event.id, event.notes)
       this.game.SetTrack(id, event.id)
     }
   }

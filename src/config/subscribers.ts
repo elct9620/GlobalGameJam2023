@@ -15,6 +15,11 @@ Container.get<Subject<events.GameCreatedEvent>>(types.GameCreatedEvent).subscrib
   Container.resolve<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber)
 )
 
+Container.bind<subscribers.LoadTrackSubscriber>(subscribers.LoadTrackSubscriber).to(subscribers.LoadTrackSubscriber)
+Container.get<Subject<events.LoadTrackEvent>>(types.LoadTrackEvent).subscribe(
+  Container.resolve<subscribers.LoadTrackSubscriber>(subscribers.LoadTrackSubscriber)
+)
+
 Container.bind<subscribers.InputSubscriber>(subscribers.InputSubscriber).to(subscribers.InputSubscriber)
 Container.get<Subject<events.KeyboardEvent>>(types.KeyboardEvent).subscribe(
   Container.resolve<subscribers.InputSubscriber>(subscribers.InputSubscriber)
