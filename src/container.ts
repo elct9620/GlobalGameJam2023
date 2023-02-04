@@ -23,6 +23,7 @@ container.bind<Subject<events.KeyboardEvent>>(types.KeyboardEvent).toConstantVal
 // Repository
 container.bind<repo.IGameRepository>(types.IGameRepository).to(repo.InMemoryGameRepository).inSingletonScope()
 container.bind<repo.IPlayerRepository>(types.IPlayerRepository).to(repo.SingletonPlayerRepository).inSingletonScope()
+container.bind<repo.ITrackRepository>(types.ITrackRepository).to(repo.InMemoryTrackRepository).inSingletonScope()
 
 // UseCase
 container.bind<usecase.GameUseCase>(usecase.GameUseCase).to(usecase.GameUseCase)
