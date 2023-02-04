@@ -31,17 +31,27 @@ import notesMidi from '@/assets/track1/notes.mid';
 import rootImg0 from '@/assets/root/0.png';
 import rootImg1 from '@/assets/root/1.png';
 import rootImg2 from '@/assets/root/2.png';
+import chickenHitImg0 from '@/assets/chickenHit/0.png';
+import chickenHitImg1 from '@/assets/chickenHit/1.png';
+import houseImg from '@/assets/house.png';
 
 interface Note {
   time: number, data: number[],
   chicken?: PIXI.AnimatedSprite,
+  hitTime?: number,
+  chickenHit?: PIXI.AnimatedSprite,
+  miss?: boolean,
 }
 
 /**
  * base 1 second for 100px on screen,
  * TRACK_SCALE = 2 => 1 second for 200px
  */
-const TRACK_SCALE = 2;
+const TRACK_SCALE = 4;
+
+const NOTE_BEFORE = 500;
+const NOTE_AFTER = 500;
+const ENDED_SLOW_DOWN_DURATION = 5000;
 
 @injectable()
 export class GameScene extends BaseScene {
@@ -50,6 +60,8 @@ export class GameScene extends BaseScene {
     cloud1Img, cloud2Img, cloud3Img,
     chickenImg0, chickenImg1, chickenImg2,
     rootImg0, rootImg1, rootImg2,
+    chickenHitImg0, chickenHitImg1,
+    houseImg,
   ]
 
   private bg?: PIXI.TilingSprite;
@@ -59,8 +71,12 @@ export class GameScene extends BaseScene {
   private currentNoteIndex: number = 0;
   private notes?: Note[];
   private chickenContainer?: PIXI.Container;
+  private house?: PIXI.Sprite;
   private root?: PIXI.AnimatedSprite;
   private started: boolean = false;
+  private endedTime?: number;
+  private score = 0;
+  private missed = 0;
 
   private _onGameStarted?: Subscription
   private _onGameHit?: Subscription
@@ -105,7 +121,6 @@ export class GameScene extends BaseScene {
       return { notes, accTime }
     }, { notes: [], accTime: -400 });
     this.notes = notes;
-
     this.evtLoadTrack.next({ id: notesMidi, notes: notes })
     console.log({ midi, notes });
   }
@@ -153,9 +168,9 @@ export class GameScene extends BaseScene {
       ])
       chicken.scale.set(0.5, 0.5)
       chicken.position.set(note.time * 0.1 * TRACK_SCALE, 0)
-      console.log(chicken.position)
-      chicken.animationSpeed = 0.1;
+      chicken.animationSpeed = 0.25;
       chicken.play();
+      note.chicken = chicken
       this.chickenContainer?.addChild(chicken)
     })
     this.chickenContainer.position.set(200, 260);
@@ -168,39 +183,97 @@ export class GameScene extends BaseScene {
       PIXI.Texture.from(rootImg2),
       PIXI.Texture.from(rootImg2),
       PIXI.Texture.from(rootImg2),
+      PIXI.Texture.from(rootImg2),
+      PIXI.Texture.from(rootImg2),
       PIXI.Texture.from(rootImg0),
     ])
     this.root.scale.set(0.5, 0.5)
     this.root.anchor.set(0.5, 0.5);
     this.root.position.set(200, 350);
-    this.root.animationSpeed = 0.6;
+    this.root.animationSpeed = 0.8;
     this.root.loop = false;
     this.addChild(this.root)
 
     this._onGameStarted = this.evtGameStarted.subscribe(() => {
       this.started = true
+      this.score = 0
+      this.missed = 0
       this.currentNoteIndex = 0
       this.bgm?.start()
+      console.log('start!')
     })
-    this.evtGameHit.subscribe(() => this.root?.gotoAndPlay(0))
+    this.evtGameHit.subscribe(() => {
+      if (!this.root || !this.notes || !this.audioContext) return;
+
+      this.root.gotoAndPlay(0)
+      const currentNote = this.notes[this.currentNoteIndex]
+      console.log(currentNote);
+      const currentTime = this.audioContext!.currentTime * 1000
+      if (
+	currentNote.hitTime === undefined &&
+	currentTime > currentNote.time - NOTE_BEFORE &&
+        currentTime < currentNote.time + NOTE_AFTER
+      ) {
+	console.log('hit!', currentNote)
+	currentNote.hitTime = this.audioContext.currentTime * 1000
+	this.score++
+	  this.nextNote()
+	setTimeout(() => {
+	  console.log('chickenHit!', currentNote);
+	  const chickenHit = new PIXI.AnimatedSprite([
+	    PIXI.Texture.from(chickenHitImg0),
+	    PIXI.Texture.from(chickenHitImg1),
+	  ])
+	  chickenHit.scale.set(0.5, 0.5)
+	  chickenHit.position.copyFrom(currentNote.chicken!.position)
+	  chickenHit.animationSpeed = 0.15;
+	  chickenHit.play();
+	  currentNote.chicken?.destroy()
+	  this.chickenContainer?.addChild(chickenHit)
+	  currentNote.chickenHit = chickenHit
+	}, 100);
+      }
+    })
   }
 
   onUpdate = (delta: number) => {
     if (this.started) {
       const deltaMS = delta * 16.66;
+      const slowDown = this.endedTime ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedTime)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
+      const groundSpeed = delta * 3 * TRACK_SCALE * slowDown;
       if (this.ground) {
-	this.ground.tilePosition.x -= delta * 3 * TRACK_SCALE;
+	this.ground.tilePosition.x -= groundSpeed;
       }
       if (this.chickenContainer) {
 	this.chickenContainer.position.x -= deltaMS * 0.001 * 100 * TRACK_SCALE;
       }
-    }
-
-    if (this.audioContext && this.notes && this.currentNoteIndex < this.notes.length) {
-      if (this.audioContext.currentTime * 1000 > this.notes[this.currentNoteIndex].time) {
-	console.log(this.notes[this.currentNoteIndex]);
-	this.currentNoteIndex++
+      if (this.house) {
+	this.house.position.x -= groundSpeed;
       }
+
+      if (!this.endedTime && this.audioContext && this.notes) {
+	const currentNote = this.notes[this.currentNoteIndex]
+	const currentTime = this.audioContext.currentTime * 1000
+
+	if (currentNote && currentTime > currentNote.time + NOTE_AFTER && this.currentNoteIndex < this.notes.length) {
+	  currentNote.miss = true
+	  this.missed++
+	  console.log('after!', this.currentNoteIndex, currentNote);
+	  this.nextNote()
+	}
+      }
+    }
+  }
+
+  nextNote = () => {
+    if (this.notes && this.currentNoteIndex < this.notes.length - 1) {
+      this.currentNoteIndex++
+    } else if (!this.endedTime) {
+	console.log('ended', { score: this.score, missed: this.missed })
+      this.endedTime = Date.now()
+      this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
+      this.house.position.set(650 * TRACK_SCALE, 100);
+      this.addChild(this.house)
     }
   }
 
