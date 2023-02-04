@@ -25,7 +25,7 @@ describe('elapse game time', () => {
 
   describe('when game not exists', () => {
     it<GameUseCaseContext>('is expected to be -1', (ctx) => {
-      expect(ctx.usecase.ElapseGameTime('__UNKNOWN__', 1)).toBe(-1)
+      expect(() => ctx.usecase.ElapseGameTime('__UNKNOWN__', 1)).toThrowError('game not found')
     })
   })
 

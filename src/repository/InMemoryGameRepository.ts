@@ -26,8 +26,12 @@ export class InMemoryGameRepository implements IGameRepository {
     this.evtGameStarted = evtGameStarted
   }
 
-  Find(id: string): Game | undefined {
-    return this.collection[id]
+  Find(id: string): Game {
+    if(this.collection[id]) {
+      return this.collection[id]
+    }
+
+    throw Error('game not found')
   }
 
   Create(id: string): Game {

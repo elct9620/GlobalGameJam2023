@@ -31,30 +31,24 @@ export class GameUseCase {
 
   ElapseGameTime(id: string, delta: number): number {
     const game = this.repo.Find(id)
-    if (game) return game.elapsed(delta)
-
-    return -1
+    return game.elapsed(delta)
   }
 
   SetTrack(id: string, trackID: string): string | undefined {
     const game = this.repo.Find(id)
-    if (!game) {
-      throw Error('game not found')
-    }
-
     game.setTrack(trackID)
     return game.currentTrackID
   }
 
   Hit(id: string): HitResult {
     const game = this.repo.Find(id)
-    if(game?.canStart) {
+    if(game.canStart) {
       game.start()
       this.repo.RefreshState(game)
       return { type: 'started' }
     }
 
-    if(game?.canAction) {
+    if(game.canAction) {
       this.evtGameHit.next({ id })
       return { type: 'action' }
     }
