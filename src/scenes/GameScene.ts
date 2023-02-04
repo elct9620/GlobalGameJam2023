@@ -17,11 +17,20 @@ import chickenImg1 from '@/assets/chicken/1.png';
 import chickenImg2 from '@/assets/chicken/2.png';
 import bgmOgg from '@/assets/track1/bgm.ogg';
 import notesMidi from '@/assets/track1/notes.mid';
+import rootImg0 from '@/assets/root/0.png';
+import rootImg1 from '@/assets/root/1.png';
+import rootImg2 from '@/assets/root/2.png';
 
 interface Note {
   time: number, data: number[],
   chicken?: PIXI.AnimatedSprite,
 }
+
+/**
+ * base 1 second for 100px on screen,
+ * TRACK_SCALE = 2 => 1 second for 200px
+ */
+const TRACK_SCALE = 2;
 
 @injectable()
 export class GameScene extends BaseScene {
@@ -29,6 +38,7 @@ export class GameScene extends BaseScene {
     bgImg, groundImg,
     cloud1Img, cloud2Img, cloud3Img,
     chickenImg0, chickenImg1, chickenImg2,
+    rootImg0, rootImg1, rootImg2,
   ]
 
   private bg?: PIXI.TilingSprite;
@@ -38,6 +48,7 @@ export class GameScene extends BaseScene {
   private currentNoteIndex: number = 0;
   private notes?: Note[];
   private chickenContainer?: PIXI.Container;
+  private root?: PIXI.AnimatedSprite;
   private started: boolean = false;
 
   private readonly usecase: GameUseCase;
@@ -116,13 +127,30 @@ export class GameScene extends BaseScene {
 	PIXI.Texture.from(chickenImg2),
       ])
       chicken.scale.set(0.5, 0.5)
-      chicken.position.set(note.time * 0.1, 0)
+      chicken.position.set(note.time * 0.1 * TRACK_SCALE, 0)
+      console.log(chicken.position)
       chicken.animationSpeed = 0.1;
       chicken.play();
       this.chickenContainer?.addChild(chicken)
     })
-    this.chickenContainer.position.y = 260;
+    this.chickenContainer.position.set(200, 260);
     this.addChild(this.chickenContainer)
+
+    this.root = new PIXI.AnimatedSprite([
+      PIXI.Texture.from(rootImg0),
+      PIXI.Texture.from(rootImg1),
+      PIXI.Texture.from(rootImg2),
+      PIXI.Texture.from(rootImg2),
+      PIXI.Texture.from(rootImg2),
+      PIXI.Texture.from(rootImg2),
+      PIXI.Texture.from(rootImg0),
+    ])
+    this.root.scale.set(0.5, 0.5)
+    this.root.anchor.set(0.5, 0.5);
+    this.root.position.set(200, 350);
+    this.root.animationSpeed = 0.6;
+    this.root.loop = false;
+    this.addChild(this.root)
 
     document.body.addEventListener('keydown', event => {
       if (event.keyCode === 32) { // space key
@@ -131,6 +159,8 @@ export class GameScene extends BaseScene {
 	  this.currentNoteIndex = 0
 	  this.bgm?.start()
 	  console.log('start!')
+	} else if (this.root) {
+	  this.root.gotoAndPlay(0)
 	}
       }
     })
@@ -138,11 +168,12 @@ export class GameScene extends BaseScene {
 
   onUpdate = (delta: number) => {
     if (this.started) {
+      const deltaMS = delta * 16.66;
       if (this.ground) {
-	this.ground.tilePosition.x -= delta * 2;
+	this.ground.tilePosition.x -= delta * 3 * TRACK_SCALE;
       }
       if (this.chickenContainer) {
-	this.chickenContainer.position.x -= delta * 1;
+	this.chickenContainer.position.x -= deltaMS * 0.001 * 100 * TRACK_SCALE;
       }
     }
 
