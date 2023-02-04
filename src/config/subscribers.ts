@@ -15,6 +15,11 @@ Container.get<Subject<events.GameCreatedEvent>>(types.GameCreatedEvent).subscrib
   Container.resolve<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber)
 )
 
+Container.bind<subscribers.GameStartedSubscriber>(subscribers.GameStartedSubscriber).to(subscribers.GameStartedSubscriber)
+Container.get<Subject<events.GameStartedEvent>>(types.GameStartedEvent).subscribe(
+  Container.resolve<subscribers.GameStartedSubscriber>(subscribers.GameStartedSubscriber)
+)
+
 Container.bind<subscribers.LoadTrackSubscriber>(subscribers.LoadTrackSubscriber).to(subscribers.LoadTrackSubscriber)
 Container.get<Subject<events.LoadTrackEvent>>(types.LoadTrackEvent).subscribe(
   Container.resolve<subscribers.LoadTrackSubscriber>(subscribers.LoadTrackSubscriber)

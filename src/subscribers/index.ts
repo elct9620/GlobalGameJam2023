@@ -1,4 +1,5 @@
 export * from './GameElapsedSubscriber'
 export * from './GameCreatedSubscriber'
+export * from './GameStartedSubscriber'
 export * from './InputSubscriber'
 export * from './LoadTrackSubscriber'

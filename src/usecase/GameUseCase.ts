@@ -61,4 +61,8 @@ export class GameUseCase {
 
     return { type: 'error' }
   }
+
+  SpawnChicken(_id: string): number {
+    return 0
+  }
 }

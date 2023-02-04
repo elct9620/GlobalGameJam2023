@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { GameUseCase } from '../../src/usecase'
+import { GameUseCase, TrackUseCase } from '../../src/usecase'
 import Container from '../../src/container'
 
 interface GameUseCaseContext {
@@ -51,5 +51,16 @@ describe('hit', () => {
     const id = ctx.usecase.CreateGame()
     ctx.usecase.SetTrack(id, 'Music.mid')
     expect(ctx.usecase.Hit(id)).toHaveProperty('type', 'started')
+  })
+})
+
+describe('spawn', () => {
+  it<GameUseCaseContext>('is expected to be 0 ', (ctx) => {
+    const track = Container.resolve<TrackUseCase>(TrackUseCase)
+    track.Load('Music.mid', [])
+
+    const id = ctx.usecase.CreateGame()
+    ctx.usecase.SetTrack(id, 'Music.mid')
+    expect(ctx.usecase.SpawnChicken(id)).toBe(0)
   })
 })
