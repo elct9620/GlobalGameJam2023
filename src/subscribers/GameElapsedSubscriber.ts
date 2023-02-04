@@ -1,22 +1,28 @@
-import { injectable } from 'inversify'
+import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { Observer } from 'rxjs'
 
 import { TickEvent } from '../events'
-import { GameUseCase } from '../usecase'
+import { GameUseCase, SessionUseCase } from '../usecase'
 
 @injectable()
 export class GameElapsedSubscriber implements Observer<TickEvent> {
-  private readonly usecase: GameUseCase;
+  private readonly gameUsecase: GameUseCase;
+  private readonly sessionUsecase: SessionUseCase;
 
   constructor(
-    usecase: GameUseCase
+    @inject(GameUseCase) gameUsecase: GameUseCase,
+    @inject(SessionUseCase) sessionUsecase: SessionUseCase
   ) {
-    this.usecase = usecase
+    this.gameUsecase = gameUsecase
+    this.sessionUsecase = sessionUsecase
   }
 
   next(event: TickEvent) {
-    this.usecase.ElapseGameTime('__DUMMY__', event.delta)
+    const id = this.sessionUsecase.CurrentGameID()
+    if(id) {
+      this.gameUsecase.ElapseGameTime(id, event.delta)
+    }
   }
 
   error = (_err: Error) => {}

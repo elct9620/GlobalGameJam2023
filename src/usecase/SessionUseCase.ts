@@ -17,12 +17,17 @@ export class SessionUseCase {
     this.playerID = playerID
   }
 
-  CurrentPlayerID(): string {
+  Start(): string {
+    const player = this.repo.Create(this.playerID)
+    return player.ID
+  }
+
+  CurrentGameID(): string | undefined {
     const player = this.repo.Find(this.playerID)
     if(!player) {
       throw Error('player not found')
     }
 
-    return player.ID
+    return player.currentGameID
   }
 }

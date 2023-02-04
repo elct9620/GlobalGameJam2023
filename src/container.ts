@@ -18,6 +18,6 @@ container.bind<repo.IPlayerRepository>(types.IPlayerRepository).to(repo.Singleto
 
 // UseCase
 container.bind<usecase.GameUseCase>(usecase.GameUseCase).to(usecase.GameUseCase)
-container.bind<usecase.PlayerUseCase>(usecase.PlayerUseCase).to(usecase.PlayerUseCase)
+container.bind<usecase.SessionUseCase>(usecase.SessionUseCase).to(usecase.SessionUseCase)
 
 export default container

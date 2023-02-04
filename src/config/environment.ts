@@ -3,7 +3,7 @@ import { Subject } from 'rxjs'
 
 import Manager from '../manager'
 import Container from '../container'
-import { PlayerUseCase } from '../usecase'
+import { SessionUseCase } from '../usecase'
 import { TickEvent } from '../events'
 import { TickEvent as TypeTickEvent, PlayerID } from '../types'
 
@@ -21,6 +21,6 @@ app.ticker.add(delta => { Container.get<Subject<TickEvent>>(TypeTickEvent).next(
 const manager = new Manager(app)
 Container.bind<Manager>(Manager).toConstantValue(manager)
 
-const usecase = Container.resolve<PlayerUseCase>(PlayerUseCase)
-const playerID = usecase.Init()
-Container.bind<string>(PlayerID).toConstantValue(playerID)
+Container.bind<string>(PlayerID).toConstantValue('__LOCAL_PLAYER__')
+const usecase = Container.resolve<SessionUseCase>(SessionUseCase)
+usecase.Start()
