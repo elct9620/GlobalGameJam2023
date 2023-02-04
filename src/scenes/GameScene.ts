@@ -35,9 +35,28 @@ import notesMidi from '@/assets/track1/notes.mid';
 import rootImg0 from '@/assets/root/0.png';
 import rootImg1 from '@/assets/root/1.png';
 import rootImg2 from '@/assets/root/2.png';
+import potatoNormalImg0 from '@/assets/potatoNormal/0.png';
+import potatoNormalImg1 from '@/assets/potatoNormal/1.png';
+import potatoCastImg0 from '@/assets/potatoCast/0.png';
+import potatoCastImg1 from '@/assets/potatoCast/1.png';
 import chickenHitImg0 from '@/assets/chickenHit/0.png';
 import chickenHitImg1 from '@/assets/chickenHit/1.png';
 import houseImg from '@/assets/house.png';
+
+import seChickenHitOgg1 from '@/assets/se/audio_G_get-hit_01.ogg';
+import seChickenHitOgg2 from '@/assets/se/audio_G_get-hit_02.ogg';
+import seChickenHitOgg3 from '@/assets/se/audio_G_get-hit_03.ogg';
+import seChickenHitOgg4 from '@/assets/se/audio_G_get-hit_04.ogg';
+import seChickenMissOgg1 from '@/assets/se/audio_G_miss_01.ogg';
+import seChickenMissOgg2 from '@/assets/se/audio_G_miss_02.ogg';
+import seChickenNormalOgg1 from '@/assets/se/audio_G_normal_01.ogg';
+import seChickenNormalOgg2 from '@/assets/se/audio_G_normal_02.ogg';
+import seChickenNormalOgg3 from '@/assets/se/audio_G_normal_03.ogg';
+import seChickenNormalOgg4 from '@/assets/se/audio_G_normal_04.ogg';
+import seChickenNormalOgg5 from '@/assets/se/audio_G_normal_05.ogg';
+import seChickenShowOgg1 from '@/assets/se/audio_us_show_01.ogg';
+import seChickenShowOgg2 from '@/assets/se/audio_us_show_02.ogg';
+import seChickenShowOgg3 from '@/assets/se/audio_us_show_01.ogg';
 
 interface Note {
   time: number, data: number[],
@@ -46,6 +65,7 @@ interface Note {
     chickenHit?: PIXI.AnimatedSprite,
     miss?: boolean,
 }
+type SeName = 'miss' | 'hit' | 'show'
 
 /**
  * base 1 second for 100px on screen,
@@ -53,8 +73,9 @@ interface Note {
  */
 const TRACK_SCALE = 4;
 
-const NOTE_BEFORE = 500;
-const NOTE_AFTER = 500;
+const NOTE_BEFORE = 200;
+const NOTE_AFTER = 200;
+const COOL_DOWN = 600;
 const ENDED_SLOW_DOWN_DURATION = 5000;
 
 @injectable()
@@ -64,6 +85,8 @@ export class GameScene extends BaseScene {
     cloud1Img, cloud2Img, cloud3Img,
     chickenImg0, chickenImg1, chickenImg2,
     rootImg0, rootImg1, rootImg2,
+    potatoNormalImg0, potatoNormalImg1,
+    potatoCastImg0, potatoCastImg1,
     chickenHitImg0, chickenHitImg1,
     houseImg,
   ]
@@ -72,11 +95,14 @@ export class GameScene extends BaseScene {
   private ground?: PIXI.TilingSprite;
   private audioContext?: AudioContext;
   private bgm?: AudioBufferSourceNode;
+  private seBuffers: Partial<Record<SeName, AudioBuffer[]>> = {};
   private currentNoteIndex: number = 0;
   private notes?: Note[];
   private chickenContainer?: PIXI.Container;
   private house?: PIXI.Sprite;
   private root?: PIXI.AnimatedSprite;
+  private potatoNormal?: PIXI.AnimatedSprite;
+  private potatoCasting?: PIXI.AnimatedSprite;
   private started: boolean = false;
   private endedTime?: number;
   private score = 0;
@@ -123,8 +149,30 @@ export class GameScene extends BaseScene {
     this.bgm.buffer = await loadAudioBuffer(bgmOgg, this.audioContext);
     this.bgm.connect(this.audioContext.destination);
 
+    this.seBuffers.hit = await Promise.all(
+      [seChickenHitOgg1, seChickenHitOgg2, seChickenHitOgg3, seChickenHitOgg4].map(ogg => (
+        loadAudioBuffer(ogg, this.audioContext!)
+      ))
+    )
+    this.seBuffers.miss = await Promise.all(
+      [
+        seChickenMissOgg1, seChickenMissOgg2,
+        seChickenNormalOgg1, seChickenNormalOgg2,
+        seChickenNormalOgg3, seChickenNormalOgg4,
+        seChickenNormalOgg5,
+      ].map(ogg => (
+        loadAudioBuffer(ogg, this.audioContext!)
+      ))
+    )
+    this.seBuffers.show = await Promise.all(
+      [
+        seChickenShowOgg1, seChickenShowOgg2, seChickenShowOgg3,
+      ].map(ogg => (
+        loadAudioBuffer(ogg, this.audioContext!)
+      ))
+    )
+
     const midi = await loadMidi(notesMidi);
-    console.log({ midi, notesMidi })
     const MIDI_SPEED = 2.5;
     const { notes } = midi.track[0].event.reduce(({ notes, accTime }: { notes: Note[], accTime: number }, event: any) => {
       if (event.type === 9 && event.data?.[1] === 80) {
@@ -136,7 +184,6 @@ export class GameScene extends BaseScene {
     }, { notes: [], accTime: -400 });
     this.notes = notes;
     this.evtLoadTrack.next({ id: notesMidi, notes: notes })
-    console.log({ midi, notes });
   }
 
   onLoaded = () => {
@@ -155,7 +202,7 @@ export class GameScene extends BaseScene {
       1280,
       300,
     )
-    this.ground.position.y = 420
+    this.ground.position.y = 600
     this.addChild(this.ground)
 
     const cloud1 = new PIXI.Sprite(PIXI.Assets.get(cloud1Img))
@@ -174,7 +221,7 @@ export class GameScene extends BaseScene {
     this.addChild(cloud3)
 
     this.chickenContainer = new PIXI.Container()
-    this.chickenContainer.position.set(200, 260);
+    this.chickenContainer.position.set(200, 440);
     this.addChild(this.chickenContainer)
 
     this._chickenTextures = [
@@ -210,10 +257,24 @@ export class GameScene extends BaseScene {
     ])
     this.root.scale.set(0.5, 0.5)
     this.root.anchor.set(0.5, 0.5);
-    this.root.position.set(200, 350);
+    this.root.position.set(240, 530);
     this.root.animationSpeed = 0.8;
     this.root.loop = false;
     this.addChild(this.root)
+
+    this.potatoNormal = new PIXI.AnimatedSprite([PIXI.Texture.from(potatoNormalImg0), PIXI.Texture.from(potatoNormalImg1)]);
+    this.potatoCasting = new PIXI.AnimatedSprite([PIXI.Texture.from(potatoCastImg0), PIXI.Texture.from(potatoCastImg1)]);
+    [this.potatoNormal, this.potatoCasting].forEach(potato => {
+      potato.animationSpeed = 0.3;
+      potato.loop = true;
+      potato.play();
+      this.addChild(potato);
+    })
+    this.potatoNormal.scale.set(0.5, 0.5)
+    this.potatoNormal.position.set(1000, -50);
+    this.potatoCasting.scale.set(0.56, 0.56)
+    this.potatoCasting.position.set(950, -50);
+    this.potatoCasting.visible = false;
 
     this._onGameStarted = this.evtGameStarted.subscribe(() => {
       this.started = true
@@ -221,32 +282,45 @@ export class GameScene extends BaseScene {
       this.missed = 0
       this.currentNoteIndex = 0
       this.bgm?.start()
+      this.playSe('show')
       console.log('start!')
     })
     this.evtGameHit.subscribe(() => {
-      if (!this.root || !this.notes || !this.audioContext) return;
+      if (
+        !this.root || !this.notes || !this.audioContext ||
+        !this.potatoNormal?.visible
+      ) return;
 
       this.root.gotoAndPlay(0)
+
+      if (this.potatoNormal?.visible && this.potatoCasting) {
+        this.potatoNormal.visible = false;
+        this.potatoCasting.visible = true;
+        setTimeout(() => {
+          this.potatoNormal!.visible = true;
+          this.potatoCasting!.visible = false;
+        }, COOL_DOWN);
+      }
+
       const currentNote = this.notes[this.currentNoteIndex]
-      console.log(currentNote);
       const currentTime = this.audioContext!.currentTime * 1000
       if (
         currentNote.hitTime === undefined &&
         currentTime > currentNote.time - NOTE_BEFORE &&
         currentTime < currentNote.time + NOTE_AFTER
       ) {
-        console.log('hit!', currentNote)
         currentNote.hitTime = this.audioContext.currentTime * 1000
         this.score++
         this.nextNote()
+
+        this.playSe('hit')
         setTimeout(() => {
-          console.log('chickenHit!', currentNote);
           const chickenHit = new PIXI.AnimatedSprite([
             PIXI.Texture.from(chickenHitImg0),
             PIXI.Texture.from(chickenHitImg1),
           ])
           chickenHit.scale.set(0.5, 0.5)
-          chickenHit.position.copyFrom(currentNote.chicken!.position)
+          chickenHit.position.set(currentNote.chicken!.position.x, -10)
           chickenHit.animationSpeed = 0.15;
           chickenHit.play();
           currentNote.chicken?.destroy()
@@ -281,7 +355,7 @@ export class GameScene extends BaseScene {
         if (currentNote && currentTime > currentNote.time + NOTE_AFTER && this.currentNoteIndex < this.notes.length) {
           currentNote.miss = true
           this.missed++
-          console.log('after!', this.currentNoteIndex, currentNote);
+          this.playSe('miss')
           this.nextNote()
         }
       }
@@ -295,8 +369,20 @@ export class GameScene extends BaseScene {
       console.log('ended', { score: this.score, missed: this.missed })
       this.endedTime = Date.now()
       this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
-      this.house.position.set(650 * TRACK_SCALE, 100);
+      this.house.position.set(650 * TRACK_SCALE, 200);
       this.addChild(this.house)
+    }
+  }
+
+  playSe = (seName: SeName) => {
+    if (this.audioContext) {
+      const candidates = this.seBuffers[seName];
+      if (candidates) {
+        const se = this.audioContext.createBufferSource();
+        se.connect(this.audioContext.destination);
+        se.buffer = candidates[Math.floor(candidates.length * Math.random())];
+        se.start();
+      }
     }
   }
 
