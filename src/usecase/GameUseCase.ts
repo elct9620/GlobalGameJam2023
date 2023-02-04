@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 import * as uuid from 'uuid';
 
-import { IGameRepository } from '../repository'
+import type { IGameRepository } from '../repository'
 import * as types from '../types'
 
 @injectable()
@@ -10,7 +10,7 @@ export class GameUseCase {
   private readonly repo: IGameRepository;
 
   constructor(
-    @inject(types.IGameRepository) repo: IGameRepository // FIXME: Fix TypeScript warning
+    @inject(types.IGameRepository) repo: IGameRepository
   ) {
     this.repo = repo
   }
