@@ -11,6 +11,7 @@ export class Game {
 
   private _currentTrackID?: string;
   private _elapsedTime: number = 0
+  private _seekTime: number = 0
   private _state: GameState = GameState.Created
   private _enemies: Enemy[] = []
 
@@ -32,6 +33,10 @@ export class Game {
 
   get elapsedTime(): number {
     return this._elapsedTime
+  }
+
+  get seekTime(): number {
+    return this._seekTime
   }
 
   get canStart(): boolean {
@@ -58,6 +63,10 @@ export class Game {
     }
 
     return -1
+  }
+
+  seekTo(currentTime: number): number {
+    return this._seekTime = currentTime
   }
 
   setTrack(id: string) {

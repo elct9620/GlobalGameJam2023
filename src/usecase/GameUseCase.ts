@@ -59,6 +59,15 @@ export class GameUseCase {
     return { type: 'error' }
   }
 
+  SyncSeek(id: string, currentTime: number): number {
+    const game = this.gameRepo.Find(id)
+    if(game.isStarted) {
+      return game.seekTo(currentTime)
+    }
+
+    return 0
+  }
+
   SpawnChicken(id: string): number {
     const game = this.gameRepo.Find(id)
     if(game.currentTrackID) {

@@ -39,6 +39,22 @@ describe('elapse game time', () => {
   })
 })
 
+describe('seek time', () => {
+  it<GameUseCaseContext>('is expected to be 0', (ctx) => {
+    const id = ctx.usecase.CreateGame()
+    expect(ctx.usecase.SyncSeek(id, 1)).toBe(0)
+  })
+
+  describe('when game started', () => {
+    it<GameUseCaseContext>('is expected to be 1', (ctx) => {
+      const id = ctx.usecase.CreateGame()
+      ctx.usecase.SetTrack(id, 'Music.mid')
+      ctx.usecase.Hit(id)
+      expect(ctx.usecase.SyncSeek(id, 1)).toBe(1)
+    })
+  })
+})
+
 describe('set track', () => {
   it<GameUseCaseContext>('is expected to be Music1.mid', (ctx) => {
     const id = ctx.usecase.CreateGame()

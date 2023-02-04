@@ -258,7 +258,7 @@ export class GameScene extends BaseScene {
   }
 
   onUpdate = (delta: number) => {
-    this.evtSeek.next({ currentTime: this.audioContext?.currentTime || 0 })
+    this.evtSeek.next({ currentTime: (this.audioContext?.currentTime || 0) * 1000 })
 
     if (this.started) {
       const deltaMS = delta * 16.66;
