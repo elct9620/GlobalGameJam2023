@@ -10,12 +10,14 @@ import { GameUseCase } from '../usecase'
 import {
   GameStartedEvent,
   GameHitEvent,
+  SeekEvent,
   SpawnChickenEvent,
   LoadTrackEvent,
 } from '../events'
 import {
   GameStartedEvent as GameStartedEventType,
   GameHitEvent as GameHitEventType,
+  SeekEvent as SeekEventType,
   SpawnChickenEvent as SpawnChickenEventType,
   LoadTrackEvent as LoadTrackEventType,
 } from '../types'
@@ -87,26 +89,29 @@ export class GameScene extends BaseScene {
   private _onGameHit?: Subscription
   private _onSpawnChicken?: Subscription
 
-  private readonly usecase: GameUseCase;
+  private readonly usecase: GameUseCase
   private readonly evtGameStarted: Subject<GameStartedEvent>
-    private readonly evtGameHit: Subject<GameHitEvent>
-    private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
-    private readonly evtLoadTrack: Subject<LoadTrackEvent>
+  private readonly evtGameHit: Subject<GameHitEvent>
+  private readonly evtSeek: Subject<SeekEvent>
+  private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
+  private readonly evtLoadTrack: Subject<LoadTrackEvent>
 
-    constructor(
-      @inject(GameUseCase) usecase: GameUseCase,
-      @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
-      @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
-      @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
-      @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
-    ) {
-      super()
-      this.usecase = usecase
-      this.evtGameStarted = evtGameStarted
-      this.evtGameHit = evtGameHit
-      this.evtSpawnChicken = evtSpawnChicken
-      this.evtLoadTrack = evtLoadTrack
-    }
+  constructor(
+    @inject(GameUseCase) usecase: GameUseCase,
+    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
+    @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
+    @inject(SeekEventType) evtSeek: Subject<SeekEvent>,
+    @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
+    @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
+  ) {
+    super()
+    this.usecase = usecase
+    this.evtGameStarted = evtGameStarted
+    this.evtGameHit = evtGameHit
+    this.evtSeek = evtSeek
+    this.evtSpawnChicken = evtSpawnChicken
+    this.evtLoadTrack = evtLoadTrack
+  }
 
   onCreated = () => {
     this.usecase.CreateGame()
@@ -253,6 +258,8 @@ export class GameScene extends BaseScene {
   }
 
   onUpdate = (delta: number) => {
+    this.evtSeek.next({ currentTime: this.audioContext?.currentTime || 0 })
+
     if (this.started) {
       const deltaMS = delta * 16.66;
       const slowDown = this.endedTime ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedTime)) / ENDED_SLOW_DOWN_DURATION, 0) : 1

@@ -16,6 +16,7 @@ container.bind<Subject<events.GameCreatedEvent>>(types.GameCreatedEvent).toConst
 container.bind<Subject<events.GameStartedEvent>>(types.GameStartedEvent).toConstantValue(new Subject<events.GameStartedEvent>())
 container.bind<Subject<events.GameHitEvent>>(types.GameHitEvent).toConstantValue(new Subject<events.GameHitEvent>())
 
+container.bind<Subject<events.SeekEvent>>(types.SeekEvent).toConstantValue(new Subject<events.SeekEvent>())
 container.bind<Subject<events.SpawnChickenEvent>>(types.SpawnChickenEvent).toConstantValue(new Subject<events.SpawnChickenEvent>())
 
 container.bind<Subject<events.LoadTrackEvent>>(types.LoadTrackEvent).toConstantValue(new Subject<events.LoadTrackEvent>())
