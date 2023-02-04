@@ -10,6 +10,11 @@ Container.get<Subject<events.TickEvent>>(types.TickEvent).subscribe(
   Container.resolve<subscribers.GameElapsedSubscriber>(subscribers.GameElapsedSubscriber)
 )
 
+Container.bind<subscribers.SeekSubscriber>(subscribers.SeekSubscriber).to(subscribers.SeekSubscriber)
+Container.get<Subject<events.SeekEvent>>(types.SeekEvent).subscribe(
+  Container.resolve<subscribers.SeekSubscriber>(subscribers.SeekSubscriber)
+)
+
 Container.bind<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber).to(subscribers.GameCreatedSubscriber)
 Container.get<Subject<events.GameCreatedEvent>>(types.GameCreatedEvent).subscribe(
   Container.resolve<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber)
