@@ -19,7 +19,8 @@ import bgmOgg from '@/assets/track1/bgm.ogg';
 import notesMidi from '@/assets/track1/notes.mid';
 
 interface Note {
-  time: number, data: number[]
+  time: number, data: number[],
+  chicken?: PIXI.AnimatedSprite,
 }
 
 @injectable()
@@ -32,11 +33,12 @@ export class GameScene extends BaseScene {
 
   private bg?: PIXI.TilingSprite;
   private ground?: PIXI.TilingSprite;
-  private chicken?: PIXI.AnimatedSprite;
   private audioContext?: AudioContext;
   private bgm?: AudioBufferSourceNode;
-  private notes?: Note[]
-  private startTime?: number;
+  private currentNoteIndex: number = 0;
+  private notes?: Note[];
+  private chickenContainer?: PIXI.Container;
+  private started: boolean = false;
 
   private readonly usecase: GameUseCase;
 
@@ -59,15 +61,15 @@ export class GameScene extends BaseScene {
 
     const midi = await loadMidi(notesMidi);
     console.log({ midi, notesMidi })
-    const MIDI_SPEED = 2.25;
+    const MIDI_SPEED = 2.5;
     const { notes } = midi.track[0].event.reduce(({ notes, accTime }: { notes: Note[], accTime: number }, event: any) => {
       if (event.type === 9 && event.data?.[1] === 80) {
-        const newAccTime = accTime + event.deltaTime / (midi.timeDivision * MIDI_SPEED) * 1000;
+        const newAccTime = accTime + event.deltaTime / (midi.timeDivision * MIDI_SPEED) * 1000 + 400;
         const note = { time: newAccTime, data: event.data };
         return { notes: [...notes, note], accTime: newAccTime };
       }
       return { notes, accTime }
-    }, { notes: [], accTime: 0 });
+    }, { notes: [], accTime: -400 });
     this.notes = notes;
     console.log({ midi, notes });
   }
@@ -106,28 +108,49 @@ export class GameScene extends BaseScene {
     cloud3.position.set(1100, 70)
     this.addChild(cloud3)
 
-    this.chicken = new PIXI.AnimatedSprite([
-      PIXI.Texture.from(chickenImg0),
-      PIXI.Texture.from(chickenImg1),
-      PIXI.Texture.from(chickenImg2),
-    ])
-    this.chicken.scale.set(0.5, 0.5)
-    this.chicken.position.set(100, 260)
-    this.chicken.animationSpeed = 0.1;
-    this.chicken.play();
-    this.addChild(this.chicken)
+    this.chickenContainer = new PIXI.Container()
+    this.notes?.forEach(note => {
+      const chicken = new PIXI.AnimatedSprite([
+	PIXI.Texture.from(chickenImg0),
+	PIXI.Texture.from(chickenImg1),
+	PIXI.Texture.from(chickenImg2),
+      ])
+      chicken.scale.set(0.5, 0.5)
+      chicken.position.set(note.time * 0.1, 0)
+      chicken.animationSpeed = 0.1;
+      chicken.play();
+      this.chickenContainer?.addChild(chicken)
+    })
+    this.chickenContainer.position.y = 260;
+    this.addChild(this.chickenContainer)
 
-    document.body.addEventListener('keydown', () => {
-      if (!this.startTime) {
-	this.startTime = Date.now()
-	this.bgm?.start()
+    document.body.addEventListener('keydown', event => {
+      if (event.keyCode === 32) { // space key
+	if (!this.started) {
+	  this.started = true
+	  this.currentNoteIndex = 0
+	  this.bgm?.start()
+	  console.log('start!')
+	}
       }
     })
   }
 
   onUpdate = (delta: number) => {
-    if (this.ground) {
-      this.ground.tilePosition.x -= delta * 1;
+    if (this.started) {
+      if (this.ground) {
+	this.ground.tilePosition.x -= delta * 2;
+      }
+      if (this.chickenContainer) {
+	this.chickenContainer.position.x -= delta * 1;
+      }
+    }
+
+    if (this.audioContext && this.notes && this.currentNoteIndex < this.notes.length) {
+      if (this.audioContext.currentTime * 1000 > this.notes[this.currentNoteIndex].time) {
+	console.log(this.notes[this.currentNoteIndex]);
+	this.currentNoteIndex++
+      }
     }
   }
 }
