@@ -16,7 +16,6 @@ export class GameCreatedSubscriber implements Observer<GameCreatedEvent> {
   }
 
   next(event: GameCreatedEvent) {
-    console.log('WAT')
     this.session.StartGame(event.id)
   }
 
