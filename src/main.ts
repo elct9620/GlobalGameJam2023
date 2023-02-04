@@ -1,6 +1,4 @@
-import './config/environment'
-import './config/scenes'
-
+import './config'
 import Manager from './manager'
 import Container from './container'
 
