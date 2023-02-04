@@ -18,7 +18,7 @@ export interface IScene extends PIXI.Container {
 }
 
 interface SceneConstructor {
-  new(): IScene
+  new(...inject: any[]): IScene
 }
 
 type SceneCollection = { [key: string]: SceneConstructor }
