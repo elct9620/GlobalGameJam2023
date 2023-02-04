@@ -7,6 +7,7 @@ export enum GameState {
 export class Game {
   readonly ID: string;
 
+  private _currentTrackID?: string;
   private _elapsedTime: number = 0
   private _state: GameState = GameState.Created
 
@@ -18,12 +19,16 @@ export class Game {
     return this._state
   }
 
+  get currentTrackID(): string | undefined {
+    return this._currentTrackID
+  }
+
   get elapsedTime(): number {
     return this._elapsedTime
   }
 
   get canStart(): boolean {
-    return this._state == GameState.Created
+    return this._state == GameState.Created && !!this.currentTrackID
   }
 
   get isStarted(): boolean {
@@ -46,5 +51,9 @@ export class Game {
     }
 
     return -1
+  }
+
+  setTrack(id: string) {
+    this._currentTrackID = id
   }
 }

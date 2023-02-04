@@ -32,8 +32,8 @@ describe('elapse game time', () => {
   describe('when game started', () => {
     it<GameUseCaseContext>('is expected to be 1', (ctx) => {
       const id = ctx.usecase.CreateGame()
+      ctx.usecase.SetTrack(id, 'Music.mid')
       ctx.usecase.Hit(id)
-
       expect(ctx.usecase.ElapseGameTime(id, 1)).toBe(1)
     })
   })
@@ -49,6 +49,7 @@ describe('set track', () => {
 describe('hit', () => {
   it<GameUseCaseContext>('is expected to have type started', (ctx) => {
     const id = ctx.usecase.CreateGame()
+    ctx.usecase.SetTrack(id, 'Music.mid')
     expect(ctx.usecase.Hit(id)).toHaveProperty('type', 'started')
   })
 })

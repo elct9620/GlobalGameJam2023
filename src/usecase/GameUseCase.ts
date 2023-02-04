@@ -36,8 +36,14 @@ export class GameUseCase {
     return -1
   }
 
-  SetTrack(_id: string, trackID: string): string {
-    return trackID
+  SetTrack(id: string, trackID: string): string | undefined {
+    const game = this.repo.Find(id)
+    if (!game) {
+      throw Error('game not found')
+    }
+
+    game.setTrack(trackID)
+    return game.currentTrackID
   }
 
   Hit(id: string): HitResult {
