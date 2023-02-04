@@ -336,7 +336,6 @@ export class GameScene extends BaseScene {
     this.evtSeek.next({ currentTime: (this.audioContext?.currentTime || 0) * 1000 })
 
     if (this.started) {
-      const deltaMS = delta * 16.66;
       const slowDown = this.endedTime ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedTime)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
       const groundSpeed = delta * 3 * TRACK_SCALE * slowDown;
       if (this.ground) {
