@@ -80,6 +80,9 @@ export class GameScene extends BaseScene {
   private score = 0;
   private missed = 0;
 
+  private _chickenTextures: PIXI.Texture[] = []
+  private _chickens: PIXI.AnimatedSprite[] = []
+
   private _onGameStarted?: Subscription
   private _onGameHit?: Subscription
   private _onSpawnChicken?: Subscription
@@ -169,16 +172,15 @@ export class GameScene extends BaseScene {
     this.chickenContainer.position.set(200, 260);
     this.addChild(this.chickenContainer)
 
+    this._chickenTextures = [
+      PIXI.Texture.from(chickenImg0),
+      PIXI.Texture.from(chickenImg1),
+      PIXI.Texture.from(chickenImg2),
+    ]
+
     this._onSpawnChicken = this.evtSpawnChicken.subscribe(evt => {
-      const chicken = new PIXI.AnimatedSprite([
-        PIXI.Texture.from(chickenImg0),
-        PIXI.Texture.from(chickenImg1),
-        PIXI.Texture.from(chickenImg2),
-      ])
-      chicken.scale.set(0.5, 0.5)
-      chicken.position.set(evt.position.x, evt.position.y)
-      chicken.animationSpeed = 0.25;
-      chicken.play();
+      const chicken = this.spawnChicken(evt.position.x, evt.position.y)
+      this._chickens[evt.index] = chicken
 
       if(this.notes) {
         const note = this.notes[evt.index]
@@ -295,6 +297,16 @@ export class GameScene extends BaseScene {
     this._onGameStarted?.unsubscribe()
     this._onGameHit?.unsubscribe()
     this._onSpawnChicken?.unsubscribe()
+  }
+
+  spawnChicken(x: number, y: number): PIXI.AnimatedSprite {
+    const chicken = new PIXI.AnimatedSprite(this._chickenTextures)
+    chicken.scale.set(0.5, 0.5)
+    chicken.position.set(x, y)
+    chicken.animationSpeed = 0.25;
+    chicken.play();
+
+    return chicken
   }
 }
 
