@@ -8,11 +8,13 @@ import { TickEvent as TypeTickEvent } from '../types'
 
 const app = new PIXI.Application({
   view: document.getElementById("view") as HTMLCanvasElement,
-  resizeTo: window,
+  width: 1280,
+  height: 720,
   resolution: devicePixelRatio || 1,
   autoDensity: true,
-  background: '#000000',
+  background: 'transparent',
 });
+app.stage.cullable = true
 app.ticker.add(delta => { Container.get<Subject<TickEvent>>(TypeTickEvent).next({ delta }) })
 
 const manager = new Manager(app)
