@@ -4,14 +4,15 @@ import 'reflect-metadata';
 
 @injectable()
 export class BaseScene extends PIXI.Container {
-  readonly assets: string[] = []
+  readonly assets: (string | PIXI.LoadAsset<any>)[] = []
 
   constructor() {
     super()
   }
 
-  onUpdate = () => {}
+  onUpdate = (_delta: number) => {}
   onCreated = () => {}
+  onPreLoad = async () => {}
   onLoaded = () => {}
   onDestroyed = () => {}
 }

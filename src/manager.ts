@@ -11,6 +11,7 @@ export interface IScene extends PIXI.Container {
   readonly assets: string[]
 
   onUpdate(delta: number): void
+  onPreLoad(): Promise<void>
   onLoaded(): void
   onCreated(): void
   onDestroyed(): void
@@ -59,7 +60,8 @@ export default class Manager {
       this.currentScene.onDestroyed()
     }
 
-    await PIXI.Assets.backgroundLoad(scene.assets)
+    await scene.onPreLoad()
+    await PIXI.Assets.load(scene.assets)
 
     this.app.stage.addChild(scene)
     this.currentScene = scene
