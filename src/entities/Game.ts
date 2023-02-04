@@ -37,6 +37,10 @@ export class Game {
   }
 
   elapsed(delta: number): number {
-    return this._elapsedTime += delta
+    if(this.state == GameState.Started) {
+      return this._elapsedTime += delta
+    }
+
+    return -1
   }
 }
