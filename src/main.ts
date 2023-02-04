@@ -41,11 +41,19 @@ source.connect(audioContext.destination);
 
 // midi
 const midi = await loadMidi(testTrackMid);
-const trackEvents = midi.track[1].event.filter(e => Array.isArray(e.data));
-console.log({ midi, trackEvents });
+const MIDI_SPEED = 2.25;
+console.log({ midi });
+const { notes } = midi.track[0].event.reduce(({ notes, accTime }, event) => {
+  if (event.type === 9 && event.data?.[1] === 80) {
+    const newAccTime = accTime + event.deltaTime / (midi.timeDivision * MIDI_SPEED) * 1000;
+    const note = { time: newAccTime, data: event.data };
+    return { notes: [...notes, note], accTime: newAccTime };
+  }
+  return { notes, accTime }
+}, { notes: [], accTime: 0 });
+console.log({ midi, notes });
 
 let startTime: number | null = null;
-let lastEventTime = 0;
 document.body.addEventListener('keydown', () => {
   if (startTime === null) {
     startTime = Date.now();
@@ -59,12 +67,10 @@ document.body.addEventListener('keydown', () => {
 app.ticker.add(() => {
   chicken.rotation += 0.01;
 
-  if (startTime !== null && trackEvents.length > 0) {
+  if (startTime !== null && notes.length > 0) {
     const timeAt = Date.now() - startTime;
-    const afterLastEvent = timeAt - lastEventTime;
-    if (afterLastEvent > trackEvents[0].deltaTime) {
-      console.log(trackEvents.shift());
-      lastEventTime = timeAt;
+    if (timeAt > notes[0].time) {
+      console.log(notes.shift());
     }
   }
 });
