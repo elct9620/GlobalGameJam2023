@@ -8,6 +8,11 @@ type Note = {
   time: number
 }
 
+export type NoteLoadResult = {
+  id: string
+  loadedCount: number
+}
+
 @injectable()
 export class TrackUseCase {
   private readonly repo: ITrackRepository
@@ -18,15 +23,15 @@ export class TrackUseCase {
     this.repo = repo
   }
 
-  Load(id: string, notes: Note[]): string {
+  Load(id: string, notes: Note[]): NoteLoadResult {
     const track = this.repo.FindOrCreate(id)
     track.resetNote()
 
-    for(let note in notes) {
+    for(let note of notes) {
       track.addNote(note)
     }
 
     this.repo.UpdateNotes(track)
-    return id
+    return { id, loadedCount: track.notesCount }
   }
 }

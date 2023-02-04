@@ -12,7 +12,11 @@ beforeEach<TrackUseCaseContext>(async (ctx) => {
 })
 
 describe('load', () => {
-  it<TrackUseCaseContext>('is expected to be Music.mid', (ctx) => {
-    expect(ctx.usecase.Load('Music.mid', [])).toBe('Music.mid')
+  it<TrackUseCaseContext>('is expected to have id Music.mid', (ctx) => {
+    expect(ctx.usecase.Load('Music.mid', [])).toHaveProperty('id', 'Music.mid')
+  })
+
+  it<TrackUseCaseContext>('is expected to have loadedCount is 1', (ctx) => {
+    expect(ctx.usecase.Load('Music.mid', [{ time: 0 }])).toHaveProperty('loadedCount', 1)
   })
 })
