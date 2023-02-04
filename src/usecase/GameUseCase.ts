@@ -31,7 +31,16 @@ export class GameUseCase {
     return -1
   }
 
-  Hit(): HitResult {
-    return { type: 'started' }
+  Hit(id: string): HitResult {
+    const game = this.repo.Find(id)
+    if(game?.canStart) {
+      return { type: 'started' }
+    }
+
+    if(game?.canAction) {
+      return { type: 'action' }
+    }
+
+    return { type: 'error' }
   }
 }
