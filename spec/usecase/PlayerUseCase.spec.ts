@@ -12,7 +12,7 @@ beforeEach<PlayerUseCaseContext>(async (ctx) => {
 })
 
 describe('initialize player', () => {
-  it<PlayerUseCaseContext>('is expected to be truthy', (ctx) => {
-    expect(ctx.usecase.Init()).toBeTruthy()
+  it<PlayerUseCaseContext>('is expected to be __LOCAL_PLAYER__', (ctx) => {
+    expect(ctx.usecase.Init()).toBe('__LOCAL_PLAYER__')
   })
 })

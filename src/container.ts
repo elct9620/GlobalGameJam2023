@@ -14,8 +14,10 @@ container.bind<Subject<events.TickEvent>>(types.TickEvent).toConstantValue(new S
 
 // Repository
 container.bind<repo.IGameRepository>(types.IGameRepository).to(repo.InMemoryGameRepository).inSingletonScope()
+container.bind<repo.IPlayerRepository>(types.IPlayerRepository).to(repo.SingletonPlayerRepository).inSingletonScope()
 
 // UseCase
 container.bind<usecase.GameUseCase>(usecase.GameUseCase).to(usecase.GameUseCase)
+container.bind<usecase.PlayerUseCase>(usecase.PlayerUseCase).to(usecase.PlayerUseCase)
 
 export default container
