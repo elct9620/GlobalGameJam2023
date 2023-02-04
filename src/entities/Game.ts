@@ -1,4 +1,4 @@
-import { Note } from './Note'
+import { Enemy } from './Enemy'
 
 export enum GameState {
   Created = 0,
@@ -12,6 +12,7 @@ export class Game {
   private _currentTrackID?: string;
   private _elapsedTime: number = 0
   private _state: GameState = GameState.Created
+  private _enemies: Enemy[] = []
 
   constructor(id: string) {
     this.ID = id
@@ -59,7 +60,8 @@ export class Game {
     this._currentTrackID = id
   }
 
-  spawn(_note: Note): number {
-    return 0
+  spawn(enemy: Enemy): number {
+    this._enemies.push(enemy)
+    return this._enemies.length - 1
   }
 }
