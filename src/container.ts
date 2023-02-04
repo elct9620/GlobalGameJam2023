@@ -13,7 +13,7 @@ const container = new Container({ skipBaseClassChecks: true })
 container.bind<Subject<events.TickEvent>>(types.TickEvent).toConstantValue(new Subject<events.TickEvent>())
 
 // Repository
-container.bind<repo.IGameRepository>(types.IGameRepository).to(repo.InMemoryGameRepository)
+container.bind<repo.IGameRepository>(types.IGameRepository).to(repo.InMemoryGameRepository).inSingletonScope()
 
 // UseCase
 container.bind<usecase.GameUseCase>(usecase.GameUseCase).to(usecase.GameUseCase)
