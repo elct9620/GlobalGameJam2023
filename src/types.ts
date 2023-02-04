@@ -1,3 +1,6 @@
+// Constant
+export const PlayerID = Symbol('PlayerID')
+
 // Event
 export const TickEvent = Symbol('TickEvent')
 

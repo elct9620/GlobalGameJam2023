@@ -3,8 +3,9 @@ import { Subject } from 'rxjs'
 
 import Manager from '../manager'
 import Container from '../container'
+import { PlayerUseCase } from '../usecase'
 import { TickEvent } from '../events'
-import { TickEvent as TypeTickEvent } from '../types'
+import { TickEvent as TypeTickEvent, PlayerID } from '../types'
 
 const app = new PIXI.Application({
   view: document.getElementById("view") as HTMLCanvasElement,
@@ -19,3 +20,7 @@ app.ticker.add(delta => { Container.get<Subject<TickEvent>>(TypeTickEvent).next(
 
 const manager = new Manager(app)
 Container.bind<Manager>(Manager).toConstantValue(manager)
+
+const usecase = Container.resolve<PlayerUseCase>(PlayerUseCase)
+const playerID = usecase.Init()
+Container.bind<string>(PlayerID).toConstantValue(playerID)
