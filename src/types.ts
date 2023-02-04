@@ -1,5 +1,1 @@
-
-let TYPES = {
-};
-
-export default TYPES;
+export const TickEvent = Symbol('TickEvent')
