@@ -9,3 +9,12 @@ export type GameStartedEvent = {
 export type GameHitEvent = {
   id: string
 }
+
+type Note = {
+  time: number
+}
+
+export type LoadTrackEvent = {
+  id: string
+  notes: Note[]
+}

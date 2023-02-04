@@ -10,10 +10,12 @@ import { GameUseCase } from '../usecase'
 import {
   GameStartedEvent,
   GameHitEvent,
+  LoadTrackEvent,
 } from '../events'
 import {
   GameStartedEvent as GameStartedEventType,
   GameHitEvent as GameHitEventType,
+  LoadTrackEvent as LoadTrackEventType,
 } from '../types'
 
 import bgImg from '@/assets/bg.jpg';
@@ -66,16 +68,19 @@ export class GameScene extends BaseScene {
   private readonly usecase: GameUseCase;
   private readonly evtGameStarted: Subject<GameStartedEvent>
   private readonly evtGameHit: Subject<GameHitEvent>
+  private readonly evtLoadTrack: Subject<LoadTrackEvent>
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
     @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
     @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
+    @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
   ) {
     super()
     this.usecase = usecase
     this.evtGameStarted = evtGameStarted
     this.evtGameHit = evtGameHit
+    this.evtLoadTrack = evtLoadTrack
   }
 
   onCreated = () => {
@@ -100,6 +105,8 @@ export class GameScene extends BaseScene {
       return { notes, accTime }
     }, { notes: [], accTime: -400 });
     this.notes = notes;
+
+    this.evtLoadTrack.next({ id: notesMidi, notes: notes })
     console.log({ midi, notes });
   }
 

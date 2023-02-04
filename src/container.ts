@@ -11,9 +11,13 @@ const container = new Container({ skipBaseClassChecks: true })
 
 // Events
 container.bind<Subject<events.TickEvent>>(types.TickEvent).toConstantValue(new Subject<events.TickEvent>())
+
 container.bind<Subject<events.GameCreatedEvent>>(types.GameCreatedEvent).toConstantValue(new Subject<events.GameCreatedEvent>())
 container.bind<Subject<events.GameStartedEvent>>(types.GameStartedEvent).toConstantValue(new Subject<events.GameStartedEvent>())
 container.bind<Subject<events.GameHitEvent>>(types.GameHitEvent).toConstantValue(new Subject<events.GameHitEvent>())
+
+container.bind<Subject<events.LoadTrackEvent>>(types.LoadTrackEvent).toConstantValue(new Subject<events.LoadTrackEvent>())
+
 container.bind<Subject<events.KeyboardEvent>>(types.KeyboardEvent).toConstantValue(new Subject<events.KeyboardEvent>())
 
 // Repository
