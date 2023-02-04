@@ -26,8 +26,12 @@ export class Game {
     return this._state == GameState.Created
   }
 
-  get canAction(): boolean {
+  get isStarted(): boolean {
     return this._state == GameState.Started
+  }
+
+  get canAction(): boolean {
+    return this.isStarted
   }
 
   start() {
@@ -37,7 +41,7 @@ export class Game {
   }
 
   elapsed(delta: number): number {
-    if(this.state == GameState.Started) {
+    if(this.isStarted) {
       return this._elapsedTime += delta
     }
 
