@@ -55,7 +55,7 @@ describe('hit', () => {
 })
 
 describe('spawn', () => {
-  it<GameUseCaseContext>('is expected to be 0 ', (ctx) => {
+  it<GameUseCaseContext>('is expected to be 0', (ctx) => {
     const track = Container.resolve<TrackUseCase>(TrackUseCase)
     track.Load('Music.mid', [])
 

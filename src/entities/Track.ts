@@ -16,6 +16,10 @@ export class Track {
     return this._notes.length
   }
 
+  get notes(): Note[] {
+    return [...this._notes]
+  }
+
   resetNote() {
     this._notes = []
   }

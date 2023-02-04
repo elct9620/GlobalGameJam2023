@@ -1,3 +1,5 @@
+import { Note } from './Note'
+
 export enum GameState {
   Created = 0,
   Started,
@@ -55,5 +57,9 @@ export class Game {
 
   setTrack(id: string) {
     this._currentTrackID = id
+  }
+
+  spawn(_note: Note): number {
+    return 0
   }
 }
