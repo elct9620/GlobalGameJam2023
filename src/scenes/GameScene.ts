@@ -73,9 +73,10 @@ type SeName = 'miss' | 'hit' | 'show'
  */
 const TRACK_SCALE = 4;
 
+const CHICKEN_CONTAINER_INIT_X = 200;
 const NOTE_BEFORE = 200;
 const NOTE_AFTER = 200;
-const COOL_DOWN = 600;
+const COOL_DOWN = 350;
 const ENDED_SLOW_DOWN_DURATION = 5000;
 
 @injectable()
@@ -221,7 +222,7 @@ export class GameScene extends BaseScene {
     this.addChild(cloud3)
 
     this.chickenContainer = new PIXI.Container()
-    this.chickenContainer.position.set(200, 440);
+    this.chickenContainer.position.set(CHICKEN_CONTAINER_INIT_X, 440);
     this.addChild(this.chickenContainer)
 
     this._chickenTextures = [
@@ -342,7 +343,7 @@ export class GameScene extends BaseScene {
         this.ground.tilePosition.x -= groundSpeed;
       }
       if (this.chickenContainer) {
-        this.chickenContainer.position.x -= deltaMS * 0.001 * 100 * TRACK_SCALE;
+        this.chickenContainer.position.x = CHICKEN_CONTAINER_INIT_X - this.audioContext!.currentTime * 100 * TRACK_SCALE;
       }
       if (this.house) {
         this.house.position.x -= groundSpeed;
