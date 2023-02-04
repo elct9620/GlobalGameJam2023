@@ -22,4 +22,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
-	    - run: yarn coverage
+      - run: yarn coverage
