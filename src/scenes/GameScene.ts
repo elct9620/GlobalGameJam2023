@@ -39,10 +39,10 @@ import houseImg from '@/assets/house.png';
 
 interface Note {
   time: number, data: number[],
-  chicken?: PIXI.AnimatedSprite,
-  hitTime?: number,
-  chickenHit?: PIXI.AnimatedSprite,
-  miss?: boolean,
+    chicken?: PIXI.AnimatedSprite,
+    hitTime?: number,
+    chickenHit?: PIXI.AnimatedSprite,
+    miss?: boolean,
 }
 
 /**
@@ -89,24 +89,24 @@ export class GameScene extends BaseScene {
 
   private readonly usecase: GameUseCase;
   private readonly evtGameStarted: Subject<GameStartedEvent>
-  private readonly evtGameHit: Subject<GameHitEvent>
-  private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
-  private readonly evtLoadTrack: Subject<LoadTrackEvent>
+    private readonly evtGameHit: Subject<GameHitEvent>
+    private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
+    private readonly evtLoadTrack: Subject<LoadTrackEvent>
 
-  constructor(
-    @inject(GameUseCase) usecase: GameUseCase,
-    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
-    @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
-    @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
-    @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
-  ) {
-    super()
-    this.usecase = usecase
-    this.evtGameStarted = evtGameStarted
-    this.evtGameHit = evtGameHit
-    this.evtSpawnChicken = evtSpawnChicken
-    this.evtLoadTrack = evtLoadTrack
-  }
+    constructor(
+      @inject(GameUseCase) usecase: GameUseCase,
+      @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
+      @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
+      @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
+      @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
+    ) {
+      super()
+      this.usecase = usecase
+      this.evtGameStarted = evtGameStarted
+      this.evtGameHit = evtGameHit
+      this.evtSpawnChicken = evtSpawnChicken
+      this.evtLoadTrack = evtLoadTrack
+    }
 
   onCreated = () => {
     this.usecase.CreateGame()
@@ -226,28 +226,28 @@ export class GameScene extends BaseScene {
       console.log(currentNote);
       const currentTime = this.audioContext!.currentTime * 1000
       if (
-	currentNote.hitTime === undefined &&
-	currentTime > currentNote.time - NOTE_BEFORE &&
+        currentNote.hitTime === undefined &&
+        currentTime > currentNote.time - NOTE_BEFORE &&
         currentTime < currentNote.time + NOTE_AFTER
       ) {
-	console.log('hit!', currentNote)
-	currentNote.hitTime = this.audioContext.currentTime * 1000
-	this.score++
-	  this.nextNote()
-	setTimeout(() => {
-	  console.log('chickenHit!', currentNote);
-	  const chickenHit = new PIXI.AnimatedSprite([
-	    PIXI.Texture.from(chickenHitImg0),
-	    PIXI.Texture.from(chickenHitImg1),
-	  ])
-	  chickenHit.scale.set(0.5, 0.5)
-	  chickenHit.position.copyFrom(currentNote.chicken!.position)
-	  chickenHit.animationSpeed = 0.15;
-	  chickenHit.play();
-	  currentNote.chicken?.destroy()
-	  this.chickenContainer?.addChild(chickenHit)
-	  currentNote.chickenHit = chickenHit
-	}, 100);
+        console.log('hit!', currentNote)
+        currentNote.hitTime = this.audioContext.currentTime * 1000
+        this.score++
+        this.nextNote()
+        setTimeout(() => {
+          console.log('chickenHit!', currentNote);
+          const chickenHit = new PIXI.AnimatedSprite([
+            PIXI.Texture.from(chickenHitImg0),
+            PIXI.Texture.from(chickenHitImg1),
+          ])
+          chickenHit.scale.set(0.5, 0.5)
+          chickenHit.position.copyFrom(currentNote.chicken!.position)
+          chickenHit.animationSpeed = 0.15;
+          chickenHit.play();
+          currentNote.chicken?.destroy()
+          this.chickenContainer?.addChild(chickenHit)
+          currentNote.chickenHit = chickenHit
+        }, 100);
       }
     })
   }
@@ -258,25 +258,25 @@ export class GameScene extends BaseScene {
       const slowDown = this.endedTime ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedTime)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
       const groundSpeed = delta * 3 * TRACK_SCALE * slowDown;
       if (this.ground) {
-	this.ground.tilePosition.x -= groundSpeed;
+        this.ground.tilePosition.x -= groundSpeed;
       }
       if (this.chickenContainer) {
-	this.chickenContainer.position.x -= deltaMS * 0.001 * 100 * TRACK_SCALE;
+        this.chickenContainer.position.x -= deltaMS * 0.001 * 100 * TRACK_SCALE;
       }
       if (this.house) {
-	this.house.position.x -= groundSpeed;
+        this.house.position.x -= groundSpeed;
       }
 
       if (!this.endedTime && this.audioContext && this.notes) {
-	const currentNote = this.notes[this.currentNoteIndex]
-	const currentTime = this.audioContext.currentTime * 1000
+        const currentNote = this.notes[this.currentNoteIndex]
+        const currentTime = this.audioContext.currentTime * 1000
 
-	if (currentNote && currentTime > currentNote.time + NOTE_AFTER && this.currentNoteIndex < this.notes.length) {
-	  currentNote.miss = true
-	  this.missed++
-	  console.log('after!', this.currentNoteIndex, currentNote);
-	  this.nextNote()
-	}
+        if (currentNote && currentTime > currentNote.time + NOTE_AFTER && this.currentNoteIndex < this.notes.length) {
+          currentNote.miss = true
+          this.missed++
+          console.log('after!', this.currentNoteIndex, currentNote);
+          this.nextNote()
+        }
       }
     }
   }
@@ -285,7 +285,7 @@ export class GameScene extends BaseScene {
     if (this.notes && this.currentNoteIndex < this.notes.length - 1) {
       this.currentNoteIndex++
     } else if (!this.endedTime) {
-	console.log('ended', { score: this.score, missed: this.missed })
+      console.log('ended', { score: this.score, missed: this.missed })
       this.endedTime = Date.now()
       this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
       this.house.position.set(650 * TRACK_SCALE, 100);
