@@ -5,6 +5,10 @@ import * as uuid from 'uuid';
 import type { IGameRepository } from '../repository'
 import * as types from '../types'
 
+export type HitResult = {
+  type: string
+}
+
 @injectable()
 export class GameUseCase {
   private readonly repo: IGameRepository;
@@ -25,5 +29,9 @@ export class GameUseCase {
     if (game) return game.elapsed(delta)
 
     return -1
+  }
+
+  Hit(): HitResult {
+    return { type: 'started' }
   }
 }
