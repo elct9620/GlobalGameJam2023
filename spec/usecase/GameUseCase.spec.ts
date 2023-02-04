@@ -32,6 +32,7 @@ describe('elapse game time', () => {
 
 describe('hit', () => {
   it<GameUseCaseContext>('is expected to have type started', (ctx) => {
-    expect(ctx.usecase.Hit()).toHaveProperty('type', 'started')
+    const id = ctx.usecase.CreateGame()
+    expect(ctx.usecase.Hit(id)).toHaveProperty('type', 'started')
   })
 })

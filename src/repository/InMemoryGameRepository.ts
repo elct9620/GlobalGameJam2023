@@ -3,21 +3,27 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 
 import { IGameRepository } from './IGameRepository'
-import { Game } from '../entities'
-import { GameCreatedEvent } from '../events'
-import { GameCreatedEvent as GameCreatedEventType } from '../types'
+import { Game, GameState } from '../entities'
+import { GameCreatedEvent, GameStartedEvent } from '../events'
+import {
+  GameCreatedEvent as GameCreatedEventType,
+  GameStartedEvent as GameStartedEventType,
+} from '../types'
 
 type GameCollection = { [key: string]: Game }
 
 @injectable()
 export class InMemoryGameRepository implements IGameRepository {
   private collection: GameCollection = {}
-  private evtGameCreated: Subject<GameCreatedEvent>
+  private readonly evtGameCreated: Subject<GameCreatedEvent>
+  private readonly evtGameStarted: Subject<GameStartedEvent>
 
   constructor(
-    @inject(GameCreatedEventType) evtGameCreated: Subject<GameCreatedEvent>
+    @inject(GameCreatedEventType) evtGameCreated: Subject<GameCreatedEvent>,
+    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>
   ) {
     this.evtGameCreated = evtGameCreated
+    this.evtGameStarted = evtGameStarted
   }
 
   Find(id: string): Game | undefined {
@@ -32,5 +38,13 @@ export class InMemoryGameRepository implements IGameRepository {
     this.collection[id] = new Game(id)
     this.evtGameCreated.next({ id })
     return this.collection[id]
+  }
+
+  RefreshState(game: Game) {
+    switch(game.state) {
+      case GameState.Started:
+        this.evtGameStarted.next({ id: game.ID })
+        break
+    }
   }
 }

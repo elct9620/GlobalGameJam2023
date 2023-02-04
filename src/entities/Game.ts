@@ -1,4 +1,4 @@
-enum GameState {
+export enum GameState {
   Created = 0,
   Started,
   Ended
@@ -14,6 +14,10 @@ export class Game {
     this.ID = id
   }
 
+  get state(): GameState {
+    return this._state
+  }
+
   get elapsedTime(): number {
     return this._elapsedTime
   }
@@ -24,6 +28,12 @@ export class Game {
 
   get canAction(): boolean {
     return this._state == GameState.Started
+  }
+
+  start() {
+    if(this.canStart) {
+      this._state = GameState.Started
+    }
   }
 
   elapsed(delta: number): number {

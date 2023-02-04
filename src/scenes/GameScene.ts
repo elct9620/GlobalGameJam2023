@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify'
+import { Subject, Subscription } from 'rxjs'
 import * as PIXI from 'pixi.js'
 import MidiParser from 'midi-parser-js'
 import 'reflect-metadata'
@@ -6,6 +7,10 @@ import gsap from 'gsap'
 
 import { BaseScene } from './BaseScene'
 import { GameUseCase } from '../usecase'
+import { GameStartedEvent } from '../events'
+import {
+  GameStartedEvent as GameStartedEventType,
+} from '../types'
 
 import bgImg from '@/assets/bg.jpg';
 import groundImg from '@/assets/ground.png';
@@ -51,13 +56,18 @@ export class GameScene extends BaseScene {
   private root?: PIXI.AnimatedSprite;
   private started: boolean = false;
 
+  private _onGameStarted?: Subscription
+
   private readonly usecase: GameUseCase;
+  private readonly evtGameStarted: Subject<GameStartedEvent>
 
   constructor(
-    @inject(GameUseCase) usecase: GameUseCase
+    @inject(GameUseCase) usecase: GameUseCase,
+    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>
   ) {
     super()
     this.usecase = usecase
+    this.evtGameStarted = evtGameStarted
   }
 
   onCreated = () => {
@@ -152,16 +162,17 @@ export class GameScene extends BaseScene {
     this.root.loop = false;
     this.addChild(this.root)
 
+    this.evtGameStarted.subscribe(() => {
+      this.started = true
+      this.currentNoteIndex = 0
+      this.bgm?.start()
+    })
+
     document.body.addEventListener('keydown', event => {
       if (event.keyCode === 32) { // space key
-	if (!this.started) {
-	  this.started = true
-	  this.currentNoteIndex = 0
-	  this.bgm?.start()
-	  console.log('start!')
-	} else if (this.root) {
-	  this.root.gotoAndPlay(0)
-	}
+        if (this.started && this.root) {
+          this.root.gotoAndPlay(0)
+        }
       }
     })
   }
@@ -183,6 +194,10 @@ export class GameScene extends BaseScene {
 	this.currentNoteIndex++
       }
     }
+  }
+
+  onDestroyed = () => {
+    if(this._onGameStarted) this._onGameStarted.unsubscribe()
   }
 }
 

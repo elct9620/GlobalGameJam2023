@@ -34,6 +34,8 @@ export class GameUseCase {
   Hit(id: string): HitResult {
     const game = this.repo.Find(id)
     if(game?.canStart) {
+      game.start()
+      this.repo.RefreshState(game)
       return { type: 'started' }
     }
 
