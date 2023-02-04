@@ -15,8 +15,15 @@ export class GameUseCase {
     this.repo = repo
   }
 
-  CreateGame(): boolean {
+  CreateGame(): string {
     const newGame = this.repo.Create(uuid.v4())
-    return !!newGame
+    return newGame.ID
+  }
+
+  ElapseGameTime(id: string, delta: number): number {
+    const game = this.repo.Find(id)
+    if (game) return game.elapsed(delta)
+
+    return -1
   }
 }
