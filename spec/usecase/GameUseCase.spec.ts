@@ -30,6 +30,13 @@ describe('elapse game time', () => {
   })
 })
 
+describe('set track', () => {
+  it<GameUseCaseContext>('is expected to be Music1.mid', (ctx) => {
+    const id = ctx.usecase.CreateGame()
+    expect(ctx.usecase.SetTrack(id, 'Music1.mid')).toBe('Music1.mid')
+  })
+})
+
 describe('hit', () => {
   it<GameUseCaseContext>('is expected to have type started', (ctx) => {
     const id = ctx.usecase.CreateGame()

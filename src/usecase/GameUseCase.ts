@@ -36,6 +36,10 @@ export class GameUseCase {
     return -1
   }
 
+  SetTrack(_id: string, trackID: string): string {
+    return trackID
+  }
+
   Hit(id: string): HitResult {
     const game = this.repo.Find(id)
     if(game?.canStart) {
