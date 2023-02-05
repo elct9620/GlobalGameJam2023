@@ -10,6 +10,7 @@ import {
   Chicken,
   HittedChicken,
   Root,
+  Potato,
 } from './objects'
 import { GameUseCase } from '../usecase'
 import {
@@ -38,10 +39,6 @@ import groundImg from '@/assets/ground.png';
 import cloud1Img from '@/assets/cloud1.png';
 import cloud2Img from '@/assets/cloud2.png';
 import cloud3Img from '@/assets/cloud3.png';
-import potatoNormalImg0 from '@/assets/potatoNormal/0.png';
-import potatoNormalImg1 from '@/assets/potatoNormal/1.png';
-import potatoCastImg0 from '@/assets/potatoCast/0.png';
-import potatoCastImg1 from '@/assets/potatoCast/1.png';
 import houseImg from '@/assets/house.png';
 
 import {
@@ -78,10 +75,9 @@ export class GameScene extends BaseScene {
     ...Chicken.assets,
     ...HittedChicken.assets,
     ...Root.assets,
+    ...Potato.assets,
     bgImg, groundImg,
     cloud1Img, cloud2Img, cloud3Img,
-    potatoNormalImg0, potatoNormalImg1,
-    potatoCastImg0, potatoCastImg1,
     houseImg,
   ]
 
@@ -94,11 +90,10 @@ export class GameScene extends BaseScene {
   private chickenContainer?: PIXI.Container;
   private house?: PIXI.Sprite;
   private root?: PIXI.AnimatedSprite;
-  private potatoNormal?: PIXI.AnimatedSprite;
-  private potatoCasting?: PIXI.AnimatedSprite;
   private started: boolean = false;
   private endedTime?: number;
 
+  private potato?: Potato
   private _chickens: PIXI.AnimatedSprite[] = []
 
   private _onGameStarted?: Subscription
@@ -244,19 +239,16 @@ export class GameScene extends BaseScene {
     this.root = new Root(240, 530)
     this.addChild(this.root)
 
-    this.potatoNormal = new PIXI.AnimatedSprite([PIXI.Texture.from(potatoNormalImg0), PIXI.Texture.from(potatoNormalImg1)]);
-    this.potatoCasting = new PIXI.AnimatedSprite([PIXI.Texture.from(potatoCastImg0), PIXI.Texture.from(potatoCastImg1)]);
-    [this.potatoNormal, this.potatoCasting].forEach(potato => {
-      potato.animationSpeed = 0.3;
-      potato.loop = true;
-      potato.play();
-      this.addChild(potato);
-    })
+    this.potato = new Potato(1100, 150)
+    this.addChild(this.potato)
+
+    /*
     this.potatoNormal.scale.set(0.5, 0.5)
     this.potatoNormal.position.set(1000, -50);
     this.potatoCasting.scale.set(0.56, 0.56)
     this.potatoCasting.position.set(950, -50);
     this.potatoCasting.visible = false;
+    */
 
     this._onGameStarted = this.evtGameStarted.subscribe(() => {
       console.log('this._onGameStarted!')
@@ -267,12 +259,13 @@ export class GameScene extends BaseScene {
     })
     this.evtGameHit.subscribe(() => {
       if (
-        !this.root || !this.notes || !this.audioContext ||
-        !this.potatoNormal?.visible
+        !this.root || !this.notes || !this.audioContext
       ) return;
 
       this.root.gotoAndPlay(0)
+      this.potato?.cast()
 
+      /*
       if (this.potatoNormal?.visible && this.potatoCasting) {
         this.potatoNormal.visible = false;
         this.potatoCasting.visible = true;
@@ -281,6 +274,7 @@ export class GameScene extends BaseScene {
           this.potatoCasting!.visible = false;
         }, COOL_DOWN);
       }
+      */
     })
 
     this._onGameHitted = this.evtGameHitted.subscribe(evt => {
