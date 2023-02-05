@@ -4,7 +4,7 @@ import * as PIXI from 'pixi.js'
 import 'reflect-metadata'
 import gsap from 'gsap'
 
-import { loadAudioBuffer, encodeMidiFrom } from '../utils'
+import { loadAudioBuffer, encodeMidiFrom, AudioController } from '../utils'
 import { BaseScene } from './BaseScene'
 import {
   Chicken,
@@ -54,7 +54,7 @@ import {
   bgmFinishOgg1, bgmFinishOgg2,
 } from '@/assets/ogg/'
 
-type SeName = 'miss' | 'hit' | 'show' | 'cast' | 'finish'
+type SFXName = 'miss' | 'hit' | 'show' | 'cast' | 'finish'
 
 const cloudAssets = Object.values(import.meta.glob('@/assets/cloud*.png', { eager: true, as: 'url' }))
 const CLOUD_MINIFEST = [
@@ -92,7 +92,7 @@ export class GameScene extends BaseScene {
 
   private audioContext?: AudioContext;
   private bgm?: AudioBufferSourceNode;
-  private seBuffers: Partial<Record<SeName, AudioBuffer[]>> = {};
+  private sfx: Partial<Record<SFXName, AudioController>> = {};
 
   private started: boolean = false;
   private endedTime?: number;
@@ -149,53 +149,28 @@ export class GameScene extends BaseScene {
 
   onPreLoad = async () => {
     this.audioContext = new AudioContext();
+
     this.bgm = this.audioContext.createBufferSource();
     this.bgm.buffer = await loadAudioBuffer(bgmOgg, this.audioContext);
     this.bgm.connect(this.audioContext.destination);
 
-    this.seBuffers.hit = await Promise.all(
-      [seChickenHitOgg1, seChickenHitOgg2, seChickenHitOgg3, seChickenHitOgg4].map(ogg => (
-        loadAudioBuffer(ogg, this.audioContext!)
-      ))
+    this.sfx.hit = new AudioController(this.audioContext)
+    await this.sfx.hit.add(seChickenHitOgg1, seChickenHitOgg2, seChickenHitOgg3, seChickenHitOgg4)
+
+    this.sfx.miss = new AudioController(this.audioContext)
+    await this.sfx.miss.add(
+      seChickenMissOgg1, seChickenMissOgg2, seChickenNormalOgg1, seChickenNormalOgg2,
+      seChickenNormalOgg3, seChickenNormalOgg4, seChickenNormalOgg5,
     )
-    this.seBuffers.miss = await Promise.all(
-      [
-        seChickenMissOgg1, seChickenMissOgg2,
-        seChickenNormalOgg1, seChickenNormalOgg2,
-        seChickenNormalOgg3, seChickenNormalOgg4,
-        seChickenNormalOgg5,
-      ].map(ogg => (
-        loadAudioBuffer(ogg, this.audioContext!)
-      ))
-    )
-    this.seBuffers.show = await Promise.all(
-      [
-        seUsShowOgg1, seUsShowOgg2, seUsShowOgg3, seUsHitGetOgg1,
-      ].map(ogg => (
-        loadAudioBuffer(ogg, this.audioContext!)
-      ))
-    )
-    this.seBuffers.cast = await Promise.all(
-      [
-        seUsHit1, seUsHit2, seUsMiss1,
-      ].map(ogg => (
-        loadAudioBuffer(ogg, this.audioContext!)
-      ))
-    )
-    this.seBuffers.cast = await Promise.all(
-      [
-        seUsHit1, seUsHit2, seUsMiss1,
-      ].map(ogg => (
-        loadAudioBuffer(ogg, this.audioContext!)
-      ))
-    )
-    this.seBuffers.finish = await Promise.all(
-      [
-        bgmFinishOgg1, bgmFinishOgg2,
-      ].map(ogg => (
-        loadAudioBuffer(ogg, this.audioContext!)
-      ))
-    )
+
+    this.sfx.show = new AudioController(this.audioContext)
+    await this.sfx.show.add(seUsShowOgg1, seUsShowOgg2, seUsShowOgg3, seUsHitGetOgg1)
+
+    this.sfx.cast = new AudioController(this.audioContext)
+    await this.sfx.cast.add(seUsHit1, seUsHit2, seUsMiss1)
+
+    this.sfx.finish = new AudioController(this.audioContext)
+    this.sfx.finish.add(bgmFinishOgg1, bgmFinishOgg2)
 
     const { notes } = await encodeMidiFrom(notesMidi, 2.5)
     this.evtLoadTrack.next({ id: notesMidi, notes: notes })
@@ -317,17 +292,7 @@ export class GameScene extends BaseScene {
     this._onSpawnChicken?.unsubscribe()
   }
 
-  playSe = (seName: SeName) => {
-    if (this.audioContext) {
-      const candidates = this.seBuffers[seName];
-      if (candidates) {
-        const se = this.audioContext.createBufferSource();
-        se.connect(this.audioContext.destination);
-        se.buffer = candidates[Math.floor(candidates.length * Math.random())];
-        se.start();
-      }
-    }
-  }
+  playSe = (name: SFXName) => this.sfx[name]?.play()
 
   showFinal() {
     if (this.finalShowed || !this.finalScore) return;
