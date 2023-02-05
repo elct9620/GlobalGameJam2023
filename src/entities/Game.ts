@@ -62,7 +62,8 @@ export class Game {
   }
 
   get mayEnded(): boolean {
-    return this._seekIndex >= this._enemies.length - 1
+    return this._seekIndex >= this._enemies.length - 1 &&
+           this.elapsedTime - this.seekTime >= 300
   }
 
   get capturedCount(): number {
