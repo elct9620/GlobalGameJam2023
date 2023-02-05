@@ -229,22 +229,10 @@ export class GameScene extends BaseScene {
     this.addChild(this.potato)
 
     this._onGameStarted = this.evtGameStarted.subscribe(this.onGameStarted)
+    this._onGameEnded = this.evtGameEnded.subscribe(this.onGameEnded)
     this.evtGameHit.subscribe(this.onGameHit)
-
     this._onGameHitted = this.evtGameHitted.subscribe(this.onGameHitted)
-
-    this._onGameMissed = this.evtGameMissed.subscribe(evt => {
-      console.log('this._onGameMissed', evt.index)
-
-      this.playSe('miss')
-    })
-
-    this._onGameEnded = this.evtGameEnded.subscribe(evt => {
-      this.endedTime = evt.endedAt
-      this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
-      this.house.position.set(650 * TRACK_SCALE, 200);
-      this.addChild(this.house)
-    })
+    this._onGameMissed = this.evtGameMissed.subscribe(this.onGameMissed)
   }
 
   onUpdate = (delta: number) => {
@@ -271,6 +259,13 @@ export class GameScene extends BaseScene {
     this.playSe('show')
   }
 
+  onGameEnded = (evt: GameEndedEvent) => {
+    this.endedTime = evt.endedAt
+    this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
+    this.house.position.set(650 * TRACK_SCALE, 200);
+    this.addChild(this.house)
+  }
+
   onGameHit = () => {
     this.root?.gotoAndPlay(0)
     this.potato?.cast()
@@ -286,6 +281,8 @@ export class GameScene extends BaseScene {
       this.chickenContainer?.addChild(hittedChicken)
     }, 100)
   }
+
+  onGameMissed = () => this.playSe('miss')
 
   onSpawnChicken = (evt: SpawnChickenEvent) => {
     const chicken = new Chicken(evt.position.x, evt.position.y)
