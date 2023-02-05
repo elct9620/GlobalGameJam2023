@@ -15,6 +15,9 @@ export type HitResult = {
 
 @injectable()
 export class GameUseCase {
+  static readonly TOLERATE_EARLY = 500
+  static readonly TOLERATE_LATER = 500
+
   private readonly gameRepo: IGameRepository
   private readonly trackRepo: ITrackRepository
   private readonly evtGameHit: Subject<GameHitEvent>
@@ -54,7 +57,7 @@ export class GameUseCase {
     }
 
     if(game.canAction) {
-      const service = new HitService(game)
+      const service = new HitService(game, GameUseCase.TOLERATE_EARLY, GameUseCase.TOLERATE_LATER)
       const target = service.findHittedEnemy()
       const index = game.capture(target)
       if(index > 0) {

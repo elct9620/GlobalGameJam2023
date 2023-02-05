@@ -1,13 +1,14 @@
 import { Game, Enemy } from '../entities'
 
 export class HitService {
-  static readonly TOLERATE_EARLY = 500
-  static readonly TOLERATE_LATER = 500
-
   private readonly game: Game
+  readonly tolerateEarly: number
+  readonly tolerateLater: number
 
-  constructor(game: Game) {
+  constructor(game: Game, tolerateEarly: number, tolerateLater: number) {
     this.game = game
+    this.tolerateEarly = tolerateEarly
+    this.tolerateLater = tolerateLater
   }
 
   findHittedEnemy(): number {
@@ -25,8 +26,8 @@ export class HitService {
   }
 
   private isHitted(enemy: Enemy, currentTime: number): boolean {
-    return currentTime - HitService.TOLERATE_EARLY <= enemy.time &&
-           currentTime + HitService.TOLERATE_LATER >= enemy.time &&
+    return currentTime - this.tolerateEarly <= enemy.time &&
+           currentTime + this.tolerateLater >= enemy.time &&
            !enemy.captured
   }
 }
