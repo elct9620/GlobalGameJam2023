@@ -6,15 +6,13 @@ import * as events from '../events'
 import * as types from '../types'
 
 events.onTick(Container.resolve<subscribers.GameElapsedSubscriber>(subscribers.GameElapsedSubscriber))
+events.onInput(Container.resolve<subscribers.InputSubscriber>(subscribers.InputSubscriber))
+
+events.onGameCreated(Container.resolve<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber))
 
 Container.bind<subscribers.SeekSubscriber>(subscribers.SeekSubscriber).to(subscribers.SeekSubscriber)
 Container.get<Subject<events.SeekEvent>>(types.SeekEvent).subscribe(
   Container.resolve<subscribers.SeekSubscriber>(subscribers.SeekSubscriber)
-)
-
-Container.bind<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber).to(subscribers.GameCreatedSubscriber)
-Container.get<Subject<events.GameCreatedEvent>>(types.GameCreatedEvent).subscribe(
-  Container.resolve<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber)
 )
 
 Container.bind<subscribers.GameStartedSubscriber>(subscribers.GameStartedSubscriber).to(subscribers.GameStartedSubscriber)
@@ -26,5 +24,3 @@ Container.bind<subscribers.LoadTrackSubscriber>(subscribers.LoadTrackSubscriber)
 Container.get<Subject<events.LoadTrackEvent>>(types.LoadTrackEvent).subscribe(
   Container.resolve<subscribers.LoadTrackSubscriber>(subscribers.LoadTrackSubscriber)
 )
-
-events.onInput(Container.resolve<subscribers.InputSubscriber>(subscribers.InputSubscriber))

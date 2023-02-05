@@ -10,7 +10,6 @@ import * as repo from './repository'
 const container = new Container({ skipBaseClassChecks: true })
 
 // Events
-container.bind<Subject<events.GameCreatedEvent>>(types.GameCreatedEvent).toConstantValue(new Subject<events.GameCreatedEvent>())
 container.bind<Subject<events.GameStartedEvent>>(types.GameStartedEvent).toConstantValue(new Subject<events.GameStartedEvent>())
 container.bind<Subject<events.GameEndedEvent>>(types.GameEndedEvent).toConstantValue(new Subject<events.GameEndedEvent>())
 container.bind<Subject<events.GameHitEvent>>(types.GameHitEvent).toConstantValue(new Subject<events.GameHitEvent>())

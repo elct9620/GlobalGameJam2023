@@ -1,6 +1,11 @@
-export type GameCreatedEvent = {
+import { publish, subscribe, Observer } from '../stream'
+
+export const GameCreatedEvent = Symbol('Game::CreatedEvent')
+export type GameCreatedPayload = {
   id: string
 }
+export const emitGameCreated = (payload: GameCreatedPayload) => publish(GameCreatedEvent, payload)
+export const onGameCreated = (observer: Observer<GameCreatedPayload>) => subscribe<GameCreatedPayload>(GameCreatedEvent, observer)
 
 export type GameStartedEvent = {
   id: string

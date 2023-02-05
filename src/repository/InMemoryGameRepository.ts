@@ -5,7 +5,7 @@ import 'reflect-metadata';
 import { IGameRepository } from './IGameRepository'
 import { Game, GameState } from '../entities'
 import {
-  GameCreatedEvent,
+  emitGameCreated,
   GameStartedEvent,
   GameEndedEvent,
   GameHittedEvent,
@@ -13,7 +13,6 @@ import {
   SpawnChickenEvent,
 } from '../events'
 import {
-  GameCreatedEvent as GameCreatedEventType,
   GameStartedEvent as GameStartedEventType,
   GameEndedEvent as GameEndedEventType,
   GameHittedEvent as GameHittedEventType,
@@ -26,7 +25,6 @@ type GameCollection = { [key: string]: Game }
 @injectable()
 export class InMemoryGameRepository implements IGameRepository {
   private collection: GameCollection = {}
-  private readonly evtGameCreated: Subject<GameCreatedEvent>
   private readonly evtGameStarted: Subject<GameStartedEvent>
   private readonly evtGameEnded: Subject<GameEndedEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
@@ -34,14 +32,12 @@ export class InMemoryGameRepository implements IGameRepository {
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
-    @inject(GameCreatedEventType) evtGameCreated: Subject<GameCreatedEvent>,
     @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
     @inject(GameEndedEventType) evtGameEnded: Subject<GameEndedEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
-    this.evtGameCreated = evtGameCreated
     this.evtGameStarted = evtGameStarted
     this.evtGameEnded = evtGameEnded
     this.evtGameHitted = evtGameHitted
@@ -63,7 +59,7 @@ export class InMemoryGameRepository implements IGameRepository {
     }
 
     this.collection[id] = new Game(id)
-    this.evtGameCreated.next({ id })
+    emitGameCreated({ id })
     return this.collection[id]
   }
 
