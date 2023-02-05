@@ -6,7 +6,10 @@ import 'reflect-metadata'
 import gsap from 'gsap'
 
 import { BaseScene } from './BaseScene'
-import { Chicken } from './objects'
+import {
+  Chicken,
+  HittedChicken,
+} from './objects'
 import { GameUseCase } from '../usecase'
 import {
   GameStartedEvent,
@@ -34,9 +37,6 @@ import groundImg from '@/assets/ground.png';
 import cloud1Img from '@/assets/cloud1.png';
 import cloud2Img from '@/assets/cloud2.png';
 import cloud3Img from '@/assets/cloud3.png';
-import chickenImg0 from '@/assets/chicken/0.png';
-import chickenImg1 from '@/assets/chicken/1.png';
-import chickenImg2 from '@/assets/chicken/2.png';
 import rootImg0 from '@/assets/root/0.png';
 import rootImg1 from '@/assets/root/1.png';
 import rootImg2 from '@/assets/root/2.png';
@@ -44,8 +44,6 @@ import potatoNormalImg0 from '@/assets/potatoNormal/0.png';
 import potatoNormalImg1 from '@/assets/potatoNormal/1.png';
 import potatoCastImg0 from '@/assets/potatoCast/0.png';
 import potatoCastImg1 from '@/assets/potatoCast/1.png';
-import chickenHitImg0 from '@/assets/chickenHit/0.png';
-import chickenHitImg1 from '@/assets/chickenHit/1.png';
 import houseImg from '@/assets/house.png';
 
 import {
@@ -79,13 +77,13 @@ const ENDED_SLOW_DOWN_DURATION = 5000;
 @injectable()
 export class GameScene extends BaseScene {
   readonly assets: string[] = [
+    ...Chicken.assets,
+    ...HittedChicken.assets,
     bgImg, groundImg,
     cloud1Img, cloud2Img, cloud3Img,
-    chickenImg0, chickenImg1, chickenImg2,
     rootImg0, rootImg1, rootImg2,
     potatoNormalImg0, potatoNormalImg1,
     potatoCastImg0, potatoCastImg1,
-    chickenHitImg0, chickenHitImg1,
     houseImg,
   ]
 
@@ -103,7 +101,6 @@ export class GameScene extends BaseScene {
   private started: boolean = false;
   private endedTime?: number;
 
-  private _chickenHittedTextures: PIXI.Texture[] = []
   private _chickens: PIXI.AnimatedSprite[] = []
 
   private _onGameStarted?: Subscription
@@ -231,11 +228,6 @@ export class GameScene extends BaseScene {
     this.chickenContainer.position.set(CHICKEN_CONTAINER_INIT_X, 440);
     this.addChild(this.chickenContainer)
 
-    this._chickenHittedTextures = [
-      PIXI.Texture.from(chickenHitImg0),
-      PIXI.Texture.from(chickenHitImg1),
-    ]
-
     this._onSpawnChicken = this.evtSpawnChicken.subscribe(evt => {
       const chicken = new Chicken(evt.position.x, evt.position.y)
       chicken.play()
@@ -314,9 +306,10 @@ export class GameScene extends BaseScene {
       this.playSe('hit')
       setTimeout(() => {
         const targetChicken: PIXI.AnimatedSprite | undefined = this._chickens[evt.index]
-        const chickenHit: PIXI.AnimatedSprite = this.spawnHittedChicken(targetChicken!.position.x, -10)
+        const hittedChicken: PIXI.AnimatedSprite = new HittedChicken(targetChicken!.position.x, -10)
+        hittedChicken.play()
         targetChicken?.destroy()
-        this.chickenContainer?.addChild(chickenHit)
+        this.chickenContainer?.addChild(hittedChicken)
       }, 100)
     })
 
@@ -371,16 +364,6 @@ export class GameScene extends BaseScene {
     this._onGameHitted?.unsubscribe()
     this._onGameMissed?.unsubscribe()
     this._onSpawnChicken?.unsubscribe()
-  }
-
-  spawnHittedChicken(x: number, y: number): PIXI.AnimatedSprite {
-    const chicken = new PIXI.AnimatedSprite(this._chickenHittedTextures)
-    chicken.scale.set(0.5, 0.5)
-    chicken.position.set(x, y)
-    chicken.animationSpeed = 0.15;
-    chicken.play();
-
-    return chicken
   }
 }
 
