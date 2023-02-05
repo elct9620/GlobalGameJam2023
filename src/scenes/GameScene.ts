@@ -85,7 +85,6 @@ export class GameScene extends BaseScene {
   private audioContext?: AudioContext;
   private bgm?: AudioBufferSourceNode;
   private seBuffers: Partial<Record<SeName, AudioBuffer[]>> = {};
-  private notes?: Note[];
   private chickenContainer?: PIXI.Container;
   private house?: PIXI.Sprite;
   private started: boolean = false;
@@ -178,7 +177,6 @@ export class GameScene extends BaseScene {
       }
       return { notes, accTime }
     }, { notes: [], accTime: -400 });
-    this.notes = notes;
     this.evtLoadTrack.next({ id: notesMidi, notes: notes })
   }
 
@@ -224,14 +222,6 @@ export class GameScene extends BaseScene {
       const chicken = new Chicken(evt.position.x, evt.position.y)
       chicken.play()
       this._chickens[evt.index] = chicken
-
-      if(this.notes) {
-        const note = this.notes[evt.index]
-        if (note) {
-          note.chicken = chicken
-        }
-      }
-
       this.chickenContainer?.addChild(chicken)
     })
 
@@ -250,7 +240,7 @@ export class GameScene extends BaseScene {
     })
     this.evtGameHit.subscribe(() => {
       if (
-        !this.root || !this.notes || !this.audioContext
+        !this.root || !this.audioContext
       ) return;
 
       this.root.gotoAndPlay(0)
