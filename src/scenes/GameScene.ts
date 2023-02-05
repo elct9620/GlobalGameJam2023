@@ -82,11 +82,13 @@ export class GameScene extends BaseScene {
 
   private bg?: PIXI.TilingSprite;
   private ground?: PIXI.TilingSprite;
+  private chickenContainer?: PIXI.Container;
+  private house?: PIXI.Sprite;
+
   private audioContext?: AudioContext;
   private bgm?: AudioBufferSourceNode;
   private seBuffers: Partial<Record<SeName, AudioBuffer[]>> = {};
-  private chickenContainer?: PIXI.Container;
-  private house?: PIXI.Sprite;
+
   private started: boolean = false;
   private endedTime?: number;
 
