@@ -72,4 +72,16 @@ describe('findHittedEnemy', () => {
       expect(service.findHittedEnemy()).toBe(3)
     })
   })
+
+  describe('when no notes on time', () => {
+    it<HitServiceContext>('is expected to find -1', (ctx) => {
+      ctx.game = new Game('DUMMY')
+      ctx.game.setTrack('Music.mid')
+      ctx.game.start()
+      ctx.game.spawn(1300)
+
+      const service = new HitService(ctx.game)
+      expect(service.findHittedEnemy()).toBe(-1)
+    })
+  })
 })

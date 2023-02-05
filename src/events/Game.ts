@@ -10,6 +10,11 @@ export type GameHitEvent = {
   id: string
 }
 
+export type GameHittedEvent = {
+  id: string,
+  index: number
+}
+
 export type SeekEvent = {
   currentTime: number
 }

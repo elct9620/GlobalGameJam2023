@@ -13,20 +13,15 @@ export class HitService {
   findHittedEnemy(): number {
     const enemies = this.game.enemies
     const currentTime = this.game.seekTime
-    let [min, max] = [0, enemies.length - 1]
-    let mid = 0
-    while(min < max) {
-      mid = Math.floor((min + max) / 2)
-      const enemy = enemies[mid]
 
+    for(let index in enemies) {
+      const enemy = enemies[index]
       if(this.isHitted(enemy, currentTime)) {
-        max = mid
-      } else {
-        min = mid + 1
+        return Number(index)
       }
     }
 
-    return min
+    return -1
   }
 
   private isHitted(enemy: Enemy, currentTime: number): boolean {

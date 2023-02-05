@@ -7,11 +7,13 @@ import { Game, GameState } from '../entities'
 import {
   GameCreatedEvent,
   GameStartedEvent,
+  GameHittedEvent,
   SpawnChickenEvent,
 } from '../events'
 import {
   GameCreatedEvent as GameCreatedEventType,
   GameStartedEvent as GameStartedEventType,
+  GameHittedEvent as GameHittedEventType,
   SpawnChickenEvent as SpawnChickenEventType,
 } from '../types'
 
@@ -22,15 +24,18 @@ export class InMemoryGameRepository implements IGameRepository {
   private collection: GameCollection = {}
   private readonly evtGameCreated: Subject<GameCreatedEvent>
   private readonly evtGameStarted: Subject<GameStartedEvent>
+  private readonly evtGameHitted: Subject<GameHittedEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
     @inject(GameCreatedEventType) evtGameCreated: Subject<GameCreatedEvent>,
     @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
+    @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
     this.evtGameCreated = evtGameCreated
     this.evtGameStarted = evtGameStarted
+    this.evtGameHitted = evtGameHitted
     this.evtSpawnChicken = evtSpawnChicken
   }
 
@@ -65,6 +70,10 @@ export class InMemoryGameRepository implements IGameRepository {
     this.evtSpawnChicken.next({ index, position: enemy.toPosition() })
   }
 
-  SaveCaptured(_game: Game, _index: number) {
+  SaveCaptured(game: Game, index: number) {
+    this.evtGameHitted.next({
+      id: game.ID,
+      index,
+    })
   }
 }
