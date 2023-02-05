@@ -5,14 +5,60 @@ html, body {
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
+}
 
-  background: #000;
+body {
+  display: flex;
+  flex-direction: column;
+  background: #422e21;
 }
 
 #view {
-  position: fixed;
-  top: 50%;
-  left: 50%;
+  max-width: 100%;
+  height: auto !important;
+}
 
-  transform: translate(-50%, -50%);
+button#cast {
+  flex: 1;
+  margin: 2rem;
+
+  border-radius: 1rem;
+
+  border: none;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+
+  background: #f0ab84;
+  filter: drop-shadow(0 10px 0 #e6783a);
+  transform: translate(0px, -10px);
+  transition: 50ms transform, 50ms filter;
+
+  font-size: 3rem;
+  text-shadow: 0 0 1px black;
+
+  line-height: normal;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  -webkit-appearance: none;
+}
+button#cast:active {
+  transform: translate(0px, 0px);
+  filter: drop-shadow(0 0px 0 #e6783a);
+}
+
+@media only screen and (min-width: 1280px) {
+  body {
+    background: #000;
+  }
+  #view {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+  }
+  button#cast {
+    display: none;
+  }
 }

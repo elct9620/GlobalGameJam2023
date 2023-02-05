@@ -35,6 +35,14 @@ window.addEventListener('keyup', (evt: globalThis.KeyboardEvent) => {
   })
 })
 
+document.getElementById('cast')?.addEventListener('pointerup', () => {
+  keyboard$.next({
+    pressed: false,
+    key: ' ',
+    code: 32
+  })
+})
+
 const manager = new Manager(app)
 Container.bind<Manager>(Manager).toConstantValue(manager)
 
