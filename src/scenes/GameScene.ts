@@ -289,10 +289,11 @@ export class GameScene extends BaseScene {
     this.potatoCasting.visible = false;
 
     this._onGameStarted = this.evtGameStarted.subscribe(() => {
+      console.log('this._onGameStarted!')
+
       this.started = true
       this.bgm?.start()
       this.playSe('show')
-      console.log('start!')
     })
     this.evtGameHit.subscribe(() => {
       if (
@@ -313,6 +314,8 @@ export class GameScene extends BaseScene {
     })
 
     this._onGameHitted = this.evtGameHitted.subscribe(evt => {
+      console.log('this._onGameHitted', evt.index)
+
       this.playSe('hit')
       setTimeout(() => {
         const targetChicken: PIXI.AnimatedSprite | undefined = this._chickens[evt.index]
@@ -322,7 +325,9 @@ export class GameScene extends BaseScene {
       }, 100)
     })
 
-    this._onGameMissed = this.evtGameMissed.subscribe(() => {
+    this._onGameMissed = this.evtGameMissed.subscribe(evt => {
+      console.log('this._onGameMissed', evt.index)
+
       this.playSe('miss')
     })
 
