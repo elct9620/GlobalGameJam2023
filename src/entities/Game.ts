@@ -65,6 +65,18 @@ export class Game {
     return this._seekIndex >= this._enemies.length - 1
   }
 
+  get capturedCount(): number {
+    return this._enemies.filter(enemy => enemy.captured).length
+  }
+
+  get missedCount(): number {
+    return this._enemies.filter(enemy => !enemy.captured).length
+  }
+
+  get totalCount(): number {
+    return this._enemies.length
+  }
+
   start() {
     if(this.canStart) {
       this._state = GameState.Started

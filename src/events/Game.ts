@@ -6,9 +6,16 @@ export type GameStartedEvent = {
   id: string
 }
 
+type Score = {
+  captured: number
+  missed: number
+  total: number
+}
+
 export type GameEndedEvent = {
   id: string
   endedAt: number
+  score: Score
 }
 
 export type GameHitEvent = {

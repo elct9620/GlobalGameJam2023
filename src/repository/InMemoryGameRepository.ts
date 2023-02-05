@@ -91,7 +91,15 @@ export class InMemoryGameRepository implements IGameRepository {
         })
       }
 
-      this.evtGameEnded.next({ id: game.ID, endedAt: game.endedTime })
+      this.evtGameEnded.next({
+        id: game.ID,
+        endedAt: game.endedTime,
+        score: {
+          captured: game.capturedCount,
+          missed: game.missedCount,
+          total: game.totalCount,
+        }
+      })
     }
   }
 
