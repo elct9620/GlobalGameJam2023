@@ -5,6 +5,7 @@ import MidiParser from 'midi-parser-js'
 import 'reflect-metadata'
 import gsap from 'gsap'
 
+import { loadAudioBuffer } from '../utils'
 import { BaseScene } from './BaseScene'
 import {
   Chicken,
@@ -311,14 +312,6 @@ export class GameScene extends BaseScene {
       }
     }
   }
-}
-
-function loadAudioBuffer(src: string, audioContext: AudioContext): Promise<AudioBuffer> {
-  return new Promise((resolve, reject) => {
-    fetch(src).then(r => r.arrayBuffer()).then(audioData => {
-      audioContext.decodeAudioData(audioData, resolve, reject);
-    }).catch(reject);
-  });
 }
 
 function loadMidi(src: string): Promise<any> {
