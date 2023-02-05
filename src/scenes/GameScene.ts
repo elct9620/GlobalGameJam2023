@@ -54,13 +54,6 @@ import {
   seUsShowOgg1, seUsShowOgg2, seUsShowOgg3,
 } from '@/assets/ogg/'
 
-interface Note {
-  time: number, data: number[],
-    chicken?: PIXI.AnimatedSprite,
-    hitTime?: number,
-    chickenHit?: PIXI.AnimatedSprite,
-    miss?: boolean,
-}
 type SeName = 'miss' | 'hit' | 'show'
 
 /**
