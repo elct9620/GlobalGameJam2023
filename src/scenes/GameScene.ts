@@ -49,10 +49,12 @@ import {
   seChickenHitOgg1, seChickenHitOgg2, seChickenHitOgg3, seChickenHitOgg4,
   seChickenMissOgg1, seChickenMissOgg2,
   seChickenNormalOgg1, seChickenNormalOgg2, seChickenNormalOgg3, seChickenNormalOgg4, seChickenNormalOgg5,
-  seUsShowOgg1, seUsShowOgg2, seUsShowOgg3,
+  seUsShowOgg1, seUsShowOgg2, seUsShowOgg3, seUsHitGetOgg1,
+  seUsHit1, seUsHit2, seUsMiss1,
+  bgmFinishOgg1, bgmFinishOgg2,
 } from '@/assets/ogg/'
 
-type SeName = 'miss' | 'hit' | 'show'
+type SeName = 'miss' | 'hit' | 'show' | 'cast' | 'finish'
 
 const cloudAssets = Object.values(import.meta.glob('@/assets/cloud*.png', { eager: true, as: 'url' }))
 const CLOUD_MINIFEST = [
@@ -168,7 +170,28 @@ export class GameScene extends BaseScene {
     )
     this.seBuffers.show = await Promise.all(
       [
-        seUsShowOgg1, seUsShowOgg2, seUsShowOgg3,
+        seUsShowOgg1, seUsShowOgg2, seUsShowOgg3, seUsHitGetOgg1,
+      ].map(ogg => (
+        loadAudioBuffer(ogg, this.audioContext!)
+      ))
+    )
+    this.seBuffers.cast = await Promise.all(
+      [
+        seUsHit1, seUsHit2, seUsMiss1,
+      ].map(ogg => (
+        loadAudioBuffer(ogg, this.audioContext!)
+      ))
+    )
+    this.seBuffers.cast = await Promise.all(
+      [
+        seUsHit1, seUsHit2, seUsMiss1,
+      ].map(ogg => (
+        loadAudioBuffer(ogg, this.audioContext!)
+      ))
+    )
+    this.seBuffers.finish = await Promise.all(
+      [
+        bgmFinishOgg1, bgmFinishOgg2,
       ].map(ogg => (
         loadAudioBuffer(ogg, this.audioContext!)
       ))
@@ -253,12 +276,14 @@ export class GameScene extends BaseScene {
   onGameEnded = (evt: GameEndedEvent) => {
     this.endedTime = evt.endedAt
     this.finalScore = { captured: evt.score.captured, total: evt.score.total };
+    this.playSe('finish');
     this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
     this.house.position.set(650 * TRACK_SCALE, 200);
     this.addChild(this.house)
   }
 
   onGameHit = () => {
+    this.playSe('cast')
     this.root?.gotoAndPlay(0)
     this.potato?.cast()
   }
