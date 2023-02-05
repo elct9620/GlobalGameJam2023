@@ -91,18 +91,19 @@ export class Game {
   }
 
   elapsed(delta: number): number {
-    if(this.isStarted) {
-      return this._elapsedTime += delta
-    }
+    if(!this.isStarted) return -1
 
-    return -1
+    return this._elapsedTime += delta
   }
 
   seekTo(currentTime: number): number {
+    if(!this.isStarted) return -1
+
     return this._seekTime = currentTime
   }
 
   updateSeekState(index: number): number {
+    if(!this.isStarted) return -1
     if(this._seekIndex > index) {
       return -1
     }
@@ -115,11 +116,15 @@ export class Game {
   }
 
   spawn(time: number): number {
+    if(!this.isStarted) return -1
+
     this._enemies.push(new Enemy(time))
     return this._enemies.length - 1
   }
 
   capture(index: number): number {
+    if(!this.isStarted) return -1
+
     const enemies = [...this._enemies]
     const enemy = enemies[index]
     if(!enemy) return -1

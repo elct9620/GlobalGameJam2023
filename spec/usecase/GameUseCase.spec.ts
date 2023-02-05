@@ -141,6 +141,8 @@ describe('spawn', () => {
 
     const id = ctx.usecase.CreateGame()
     ctx.usecase.SetTrack(id, 'Music.mid')
+    ctx.usecase.Hit(id)
+
     expect(ctx.usecase.SpawnChicken(id)).toBe(0)
   })
 
@@ -151,6 +153,8 @@ describe('spawn', () => {
 
       const id = ctx.usecase.CreateGame()
       ctx.usecase.SetTrack(id, 'Music.mid')
+      ctx.usecase.Hit(id)
+
       expect(ctx.usecase.SpawnChicken(id)).toBe(2)
     })
   })
