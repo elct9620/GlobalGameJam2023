@@ -62,8 +62,9 @@ export class Game {
   }
 
   get mayEnded(): boolean {
+    // FIXME: Last chicken cannot hit, patched by check elapsedTime
     return this._seekIndex >= this._enemies.length - 1 &&
-           (this.elapsedTime - this.enemies[this._enemies.length-1].time) >= 300
+           (this.elapsedTime - (this.enemies[this._enemies.length-1]?.time || 0)) >= 300
   }
 
   get capturedCount(): number {
