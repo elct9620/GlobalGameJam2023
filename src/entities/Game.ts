@@ -11,6 +11,7 @@ export class Game {
 
   private _currentTrackID?: string;
   private _elapsedTime: number = 0
+  private _endedTime: number = 0
   private _seekTime: number = 0
   private _seekIndex: number = 0
   private _state: GameState = GameState.Created
@@ -34,6 +35,10 @@ export class Game {
 
   get elapsedTime(): number {
     return this._elapsedTime
+  }
+
+  get endedTime(): number {
+    return this._endedTime
   }
 
   get seekTime(): number {
@@ -68,6 +73,7 @@ export class Game {
 
   end() {
     if(this.mayEnded) {
+      this._endedTime = Date.now()
       this._state = GameState.Ended
     }
   }

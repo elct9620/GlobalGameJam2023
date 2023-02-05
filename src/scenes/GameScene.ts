@@ -331,8 +331,8 @@ export class GameScene extends BaseScene {
       this.playSe('miss')
     })
 
-    this._onGameEnded = this.evtGameEnded.subscribe(() => {
-      this.endedTime = Date.now()
+    this._onGameEnded = this.evtGameEnded.subscribe(evt => {
+      this.endedTime = evt.endedAt
       this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
       this.house.position.set(650 * TRACK_SCALE, 200);
       this.addChild(this.house)

@@ -8,6 +8,7 @@ export type GameStartedEvent = {
 
 export type GameEndedEvent = {
   id: string
+  endedAt: number
 }
 
 export type GameHitEvent = {
