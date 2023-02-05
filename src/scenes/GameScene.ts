@@ -37,6 +37,7 @@ import {
 import bgImg from '@/assets/bg.jpg';
 import groundImg from '@/assets/ground.png';
 
+import startPanelImg from '@/assets/start_panel.png';
 import houseImg from '@/assets/house.png';
 import winBgImg from '@/assets/win_bg.jpg';
 import loseBgImg from '@/assets/lose_bg.png';
@@ -80,13 +81,14 @@ export class GameScene extends BaseScene {
     ...Root.assets,
     ...Potato.assets,
     ...cloudAssets,
-    bgImg, groundImg,
+    bgImg, groundImg, startPanelImg,
     houseImg,
     winBgImg, loseBgImg, finishPanelImg, againBtnImg,
   ]
 
   private bg?: PIXI.TilingSprite;
   private ground?: PIXI.TilingSprite;
+  private startPanel?: PIXI.Sprite;
   private chickenContainer?: PIXI.Container;
   private house?: PIXI.Sprite;
 
@@ -211,9 +213,13 @@ export class GameScene extends BaseScene {
     this.chickenContainer.position.set(CHICKEN_CONTAINER_INIT_X, 440);
     this.addChild(this.chickenContainer)
 
-
     this.root = new Root(240, 530)
     this.addChild(this.root)
+
+    this.startPanel = new PIXI.Sprite(PIXI.Texture.from(startPanelImg))
+    this.startPanel.scale.set(0.9, 0.9);
+    this.startPanel.position.set(64, 36.15);
+    this.addChild(this.startPanel)
 
     this.potato = new Potato(1100, 150)
     this.addChild(this.potato)
@@ -249,6 +255,12 @@ export class GameScene extends BaseScene {
     this.started = true
     this.bgm?.start()
     this.playSe('show')
+
+    if (this.startPanel) {
+      gsap.to(this.startPanel.position, {
+        y: -1000, duration: 1, repeat: 0,
+      });
+    }
   }
 
   onGameEnded = (evt: GameEndedEvent) => {
