@@ -3,14 +3,20 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 import * as uuid from 'uuid';
 
+import { Enemy } from '../entities'
 import type { IGameRepository, ITrackRepository } from '../repository'
-import { HitService } from '../services/HitService'
+import { HitService, SeekService } from '../services'
 import { GameHitEvent } from '../events'
 import * as types from '../types'
 
 export type HitResult = {
   type: string
   meta?: { [key: string]: any }
+}
+
+export type SeekResult = {
+  time: number,
+  index: number
 }
 
 @injectable()
@@ -72,13 +78,23 @@ export class GameUseCase {
     return { type: 'error' }
   }
 
-  SyncSeek(id: string, currentTime: number): number {
+  SyncSeek(id: string, currentTime: number): SeekResult {
     const game = this.gameRepo.Find(id)
     if(game.isStarted) {
-      return game.seekTo(currentTime)
+      const service = new SeekService(game, GameUseCase.TOLERATE_LATER)
+      const time = game.seekTo(currentTime)
+
+      const currentIndex = game.seekIndex
+      const index = service.findSeekIndex(currentTime)
+      const missed: Enemy[] = service.findMissed(currentIndex, index)
+
+      game.updateSeekState(index)
+      this.gameRepo.RefreshSeekState(game, missed)
+
+      return { time, index }
     }
 
-    return 0
+    return { time: 0, index: -1 }
   }
 
   SpawnChicken(id: string): number {

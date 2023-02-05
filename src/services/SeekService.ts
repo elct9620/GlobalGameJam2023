@@ -1,4 +1,4 @@
-import { Game } from '../entities'
+import { Game, Enemy } from '../entities'
 
 export class SeekService {
   private readonly game: Game
@@ -21,6 +21,22 @@ export class SeekService {
       }
     }
 
-    return idx
+    return idx >= enemiesCount ? enemiesCount - 1 : idx
+  }
+
+  findMissed(from: number, to: number): Enemy[] {
+    const enemies = this.game.enemies
+    let missed: Enemy[] = []
+    let idx = from
+
+    for(; idx < to; idx++) {
+      if(enemies[idx].captured) {
+        continue
+      }
+
+      missed.push(enemies[idx])
+    }
+
+    return missed
   }
 }

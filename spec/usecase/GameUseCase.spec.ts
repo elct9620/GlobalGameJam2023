@@ -40,17 +40,36 @@ describe('elapse game time', () => {
 })
 
 describe('seek time', () => {
-  it<GameUseCaseContext>('is expected to be 0', (ctx) => {
+  it<GameUseCaseContext>('is expected to have time 0', (ctx) => {
     const id = ctx.usecase.CreateGame()
-    expect(ctx.usecase.SyncSeek(id, 1)).toBe(0)
+    expect(ctx.usecase.SyncSeek(id, 1)).toHaveProperty('time', 0)
+  })
+
+  it<GameUseCaseContext>('is expected to have index -1', (ctx) => {
+    const id = ctx.usecase.CreateGame()
+    expect(ctx.usecase.SyncSeek(id, 1)).toHaveProperty('index', -1)
   })
 
   describe('when game started', () => {
-    it<GameUseCaseContext>('is expected to be 1', (ctx) => {
+    it<GameUseCaseContext>('is expected to have time 1', (ctx) => {
       const id = ctx.usecase.CreateGame()
       ctx.usecase.SetTrack(id, 'Music.mid')
       ctx.usecase.Hit(id)
-      expect(ctx.usecase.SyncSeek(id, 1)).toBe(1)
+      expect(ctx.usecase.SyncSeek(id, 1)).toHaveProperty('time', 1)
+    })
+  })
+
+  describe('when index is changed', () => {
+    it<GameUseCaseContext>('is expected to have index 1', (ctx) => {
+      const track = Container.resolve<TrackUseCase>(TrackUseCase)
+      track.Load('Music.mid', [{ time: 2500 }, { time: 4000}])
+
+      const id = ctx.usecase.CreateGame()
+      ctx.usecase.SetTrack(id, 'Music.mid')
+      ctx.usecase.Hit(id)
+      ctx.usecase.SpawnChicken(id)
+
+      expect(ctx.usecase.SyncSeek(id, 5000)).toHaveProperty('index', 1)
     })
   })
 })
@@ -83,7 +102,7 @@ describe('hit', () => {
       ctx.usecase.SetTrack(id, 'Music.mid')
       ctx.usecase.Hit(id)
 
-      expect(ctx.usecase.Hit(id)).toHaveProperty('meta', { index: - 1})
+      expect(ctx.usecase.Hit(id)).toHaveProperty('meta', { index: -1})
     })
   })
 

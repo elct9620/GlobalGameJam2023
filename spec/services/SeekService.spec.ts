@@ -8,7 +8,7 @@ interface SeekServiceContext {
 }
 
 beforeEach<SeekServiceContext>(async (ctx) => {
-  const notes = [0, 200, 700, 1300]
+  const notes = [0, 200, 1000, 2300]
 
   ctx.game = new Game('DUMMY')
   ctx.game.setTrack('Music.mid')
@@ -29,17 +29,17 @@ describe('findSeektedEnemy', () => {
     })
   })
 
-  describe('when currentTime is 700', () => {
-    it<SeekServiceContext>('is expected to find 0', (ctx) => {
+  describe('when currentTime is 100', () => {
+    it<SeekServiceContext>('is expected to find 2', (ctx) => {
       const service = new SeekService(ctx.game, 500)
-      expect(service.findSeekIndex(700)).toBe(1)
+      expect(service.findSeekIndex(1000)).toBe(2)
     })
   })
 
-  describe('when currentTime is 1300', () => {
-    it<SeekServiceContext>('is expected to find 0', (ctx) => {
+  describe('when currentTime is 2300', () => {
+    it<SeekServiceContext>('is expected to find 3', (ctx) => {
       const service = new SeekService(ctx.game, 500)
-      expect(service.findSeekIndex(1300)).toBe(3)
+      expect(service.findSeekIndex(2300)).toBe(3)
     })
   })
 })

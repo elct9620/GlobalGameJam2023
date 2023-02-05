@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 
 import { IGameRepository } from './IGameRepository'
-import { Game, GameState } from '../entities'
+import { Game, GameState, Enemy } from '../entities'
 import {
   GameCreatedEvent,
   GameStartedEvent,
@@ -63,6 +63,9 @@ export class InMemoryGameRepository implements IGameRepository {
         this.evtGameStarted.next({ id: game.ID })
         break
     }
+  }
+
+  RefreshSeekState(_game: Game, _missed: Enemy[]) {
   }
 
   CommitSpawn(game: Game, index: number) {

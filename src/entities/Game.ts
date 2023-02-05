@@ -74,6 +74,14 @@ export class Game {
     return this._seekTime = currentTime
   }
 
+  updateSeekState(index: number): number {
+    if(this._seekIndex > index) {
+      return -1
+    }
+
+    return this._seekIndex = index
+  }
+
   setTrack(id: string) {
     this._currentTrackID = id
   }
