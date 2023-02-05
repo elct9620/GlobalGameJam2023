@@ -231,18 +231,7 @@ export class GameScene extends BaseScene {
     this._onGameStarted = this.evtGameStarted.subscribe(this.onGameStarted)
     this.evtGameHit.subscribe(this.onGameHit)
 
-    this._onGameHitted = this.evtGameHitted.subscribe(evt => {
-      console.log('this._onGameHitted', evt.index)
-
-      this.playSe('hit')
-      setTimeout(() => {
-        const targetChicken: PIXI.AnimatedSprite | undefined = this._chickens[evt.index]
-        const hittedChicken: PIXI.AnimatedSprite = new HittedChicken(targetChicken!.position.x, -10)
-        hittedChicken.play()
-        targetChicken?.destroy()
-        this.chickenContainer?.addChild(hittedChicken)
-      }, 100)
-    })
+    this._onGameHitted = this.evtGameHitted.subscribe(this.onGameHitted)
 
     this._onGameMissed = this.evtGameMissed.subscribe(evt => {
       console.log('this._onGameMissed', evt.index)
@@ -285,6 +274,17 @@ export class GameScene extends BaseScene {
   onGameHit = () => {
     this.root?.gotoAndPlay(0)
     this.potato?.cast()
+  }
+
+  onGameHitted = (evt: GameHittedEvent) => {
+    this.playSe('hit')
+    setTimeout(() => {
+      const targetChicken: PIXI.AnimatedSprite | undefined = this._chickens[evt.index]
+      const hittedChicken: PIXI.AnimatedSprite = new HittedChicken(targetChicken!.position.x, -10)
+      hittedChicken.play()
+      targetChicken?.destroy()
+      this.chickenContainer?.addChild(hittedChicken)
+    }, 100)
   }
 
   onSpawnChicken = (evt: SpawnChickenEvent) => {
