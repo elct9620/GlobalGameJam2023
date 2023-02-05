@@ -228,21 +228,8 @@ export class GameScene extends BaseScene {
     this.potato = new Potato(1100, 150)
     this.addChild(this.potato)
 
-    this._onGameStarted = this.evtGameStarted.subscribe(() => {
-      console.log('this._onGameStarted!')
-
-      this.started = true
-      this.bgm?.start()
-      this.playSe('show')
-    })
-    this.evtGameHit.subscribe(() => {
-      if (
-        !this.root || !this.audioContext
-      ) return;
-
-      this.root.gotoAndPlay(0)
-      this.potato?.cast()
-    })
+    this._onGameStarted = this.evtGameStarted.subscribe(this.onGameStarted)
+    this.evtGameHit.subscribe(this.onGameHit)
 
     this._onGameHitted = this.evtGameHitted.subscribe(evt => {
       console.log('this._onGameHitted', evt.index)
@@ -287,6 +274,17 @@ export class GameScene extends BaseScene {
         this.house.position.x -= groundSpeed;
       }
     }
+  }
+
+  onGameStarted = () => {
+    this.started = true
+    this.bgm?.start()
+    this.playSe('show')
+  }
+
+  onGameHit = () => {
+    this.root?.gotoAndPlay(0)
+    this.potato?.cast()
   }
 
   onSpawnChicken = (evt: SpawnChickenEvent) => {
