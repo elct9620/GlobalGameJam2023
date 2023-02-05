@@ -6,6 +6,7 @@ export const TickEvent = Symbol('TickEvent')
 
 export const GameCreatedEvent = Symbol('GameCreatedEvent')
 export const GameStartedEvent = Symbol('GameStartedEvent')
+export const GameEndedEvent = Symbol('GameEndedEvent')
 export const GameHitEvent = Symbol('GameHitEvent')
 export const GameHittedEvent = Symbol('GameHittedEvent')
 export const GameMissedEvent = Symbol('GameMissedEvent')

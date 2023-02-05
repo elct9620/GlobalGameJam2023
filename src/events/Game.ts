@@ -6,6 +6,10 @@ export type GameStartedEvent = {
   id: string
 }
 
+export type GameEndedEvent = {
+  id: string
+}
+
 export type GameHitEvent = {
   id: string
 }
