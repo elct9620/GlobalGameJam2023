@@ -66,7 +66,7 @@ export class GameUseCase {
       const service = new HitService(game, GameUseCase.TOLERATE_EARLY, GameUseCase.TOLERATE_LATER)
       const target = service.findHittedEnemy()
       const index = game.capture(target)
-      if(index > 0) {
+      if(index >= 0) {
         this.gameRepo.SaveCaptured(game, index)
       }
 
