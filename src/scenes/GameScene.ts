@@ -1,11 +1,10 @@
 import { inject, injectable } from 'inversify'
 import { Subject, Subscription } from 'rxjs'
 import * as PIXI from 'pixi.js'
-import MidiParser from 'midi-parser-js'
 import 'reflect-metadata'
 import gsap from 'gsap'
 
-import { loadAudioBuffer } from '../utils'
+import { loadAudioBuffer, loadMidi } from '../utils'
 import { BaseScene } from './BaseScene'
 import {
   Chicken,
@@ -312,12 +311,4 @@ export class GameScene extends BaseScene {
       }
     }
   }
-}
-
-function loadMidi(src: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    fetch(src).then(r => r.arrayBuffer()).then(midiData => {
-      resolve(MidiParser.Uint8(new Uint8Array(midiData)));
-    }).catch(reject);
-  });
 }
