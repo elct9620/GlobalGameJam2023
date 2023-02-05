@@ -9,6 +9,7 @@ import { BaseScene } from './BaseScene'
 import {
   Chicken,
   HittedChicken,
+  Root,
 } from './objects'
 import { GameUseCase } from '../usecase'
 import {
@@ -37,9 +38,6 @@ import groundImg from '@/assets/ground.png';
 import cloud1Img from '@/assets/cloud1.png';
 import cloud2Img from '@/assets/cloud2.png';
 import cloud3Img from '@/assets/cloud3.png';
-import rootImg0 from '@/assets/root/0.png';
-import rootImg1 from '@/assets/root/1.png';
-import rootImg2 from '@/assets/root/2.png';
 import potatoNormalImg0 from '@/assets/potatoNormal/0.png';
 import potatoNormalImg1 from '@/assets/potatoNormal/1.png';
 import potatoCastImg0 from '@/assets/potatoCast/0.png';
@@ -79,9 +77,9 @@ export class GameScene extends BaseScene {
   readonly assets: string[] = [
     ...Chicken.assets,
     ...HittedChicken.assets,
+    ...Root.assets,
     bgImg, groundImg,
     cloud1Img, cloud2Img, cloud3Img,
-    rootImg0, rootImg1, rootImg2,
     potatoNormalImg0, potatoNormalImg1,
     potatoCastImg0, potatoCastImg1,
     houseImg,
@@ -243,22 +241,7 @@ export class GameScene extends BaseScene {
       this.chickenContainer?.addChild(chicken)
     })
 
-    this.root = new PIXI.AnimatedSprite([
-      PIXI.Texture.from(rootImg0),
-      PIXI.Texture.from(rootImg1),
-      PIXI.Texture.from(rootImg2),
-      PIXI.Texture.from(rootImg2),
-      PIXI.Texture.from(rootImg2),
-      PIXI.Texture.from(rootImg2),
-      PIXI.Texture.from(rootImg2),
-      PIXI.Texture.from(rootImg2),
-      PIXI.Texture.from(rootImg0),
-    ])
-    this.root.scale.set(0.5, 0.5)
-    this.root.anchor.set(0.5, 0.5);
-    this.root.position.set(240, 530);
-    this.root.animationSpeed = 0.8;
-    this.root.loop = false;
+    this.root = new Root(240, 530)
     this.addChild(this.root)
 
     this.potatoNormal = new PIXI.AnimatedSprite([PIXI.Texture.from(potatoNormalImg0), PIXI.Texture.from(potatoNormalImg1)]);
