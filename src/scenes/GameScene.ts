@@ -96,7 +96,7 @@ export class GameScene extends BaseScene {
   private bgm?: AudioBufferSourceNode;
   private sfx: Partial<Record<SFXName, AudioController>> = {};
 
-  private started: boolean = false;
+  private startedTime?: number
   private endedTime?: number;
   private finalScore?: { captured: number, total: number };
   private finalShowed: boolean = false;
@@ -233,9 +233,11 @@ export class GameScene extends BaseScene {
   }
 
   onUpdate = (delta: number) => {
-    this.evtSeek.next({ currentTime: (this.audioContext?.currentTime || 0) * 1000 })
 
-    if (this.started && !this.finalShowed) {
+    if (this.startedTime && !this.finalShowed) {
+      const deltaTime = (Date.now() - this.startedTime) / 1000
+      this.evtSeek.next({ currentTime: (deltaTime || 0) * 1000 })
+
       const slowDown = this.endedTime ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedTime)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
       if (slowDown <= 0) { this.showFinal() }
       const groundSpeed = delta * 3 * TRACK_SCALE * slowDown;
@@ -243,7 +245,7 @@ export class GameScene extends BaseScene {
         this.ground.tilePosition.x -= groundSpeed;
       }
       if (this.chickenContainer) {
-        this.chickenContainer.position.x = CHICKEN_CONTAINER_INIT_X - this.audioContext!.currentTime * 100 * TRACK_SCALE;
+        this.chickenContainer.position.x = CHICKEN_CONTAINER_INIT_X - deltaTime * 100 * TRACK_SCALE;
       }
       if (this.house) {
         this.house.position.x -= groundSpeed;
@@ -252,7 +254,7 @@ export class GameScene extends BaseScene {
   }
 
   onGameStarted = () => {
-    this.started = true
+    this.startedTime = Date.now()
     this.bgm?.start()
     this.playSe('show')
 
