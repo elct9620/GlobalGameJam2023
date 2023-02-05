@@ -51,10 +51,10 @@ import {
   seChickenNormalOgg1, seChickenNormalOgg2, seChickenNormalOgg3, seChickenNormalOgg4, seChickenNormalOgg5,
   seUsShowOgg1, seUsShowOgg2, seUsShowOgg3, seUsHitGetOgg1,
   seUsHit1, seUsHit2, seUsMiss1,
-  bgmFinishOgg1, bgmFinishOgg2,
+  bgmFinishWinOgg1, bgmFinishLoseOgg2,
 } from '@/assets/ogg/'
 
-type SFXName = 'miss' | 'hit' | 'show' | 'cast' | 'finish'
+type SFXName = 'miss' | 'hit' | 'show' | 'cast' | 'win' | 'lose'
 
 const cloudAssets = Object.values(import.meta.glob('@/assets/cloud*.png', { eager: true, as: 'url' }))
 const CLOUD_MINIFEST = [
@@ -169,8 +169,11 @@ export class GameScene extends BaseScene {
     this.sfx.cast = new AudioController(this.audioContext)
     await this.sfx.cast.add(seUsHit1, seUsHit2, seUsMiss1)
 
-    this.sfx.finish = new AudioController(this.audioContext)
-    this.sfx.finish.add(bgmFinishOgg1, bgmFinishOgg2)
+    this.sfx.win = new AudioController(this.audioContext)
+    this.sfx.win.add(bgmFinishWinOgg1)
+
+    this.sfx.lose = new AudioController(this.audioContext)
+    this.sfx.lose.add(bgmFinishLoseOgg2)
 
     const { notes } = await encodeMidiFrom(notesMidi, 2.5)
     this.evtLoadTrack.next({ id: notesMidi, notes: notes })
@@ -192,7 +195,7 @@ export class GameScene extends BaseScene {
       1280,
       300,
     )
-    this.ground.position.y = 600
+    this.ground.position.y = 525
     this.addChild(this.ground)
 
     cloudAssets.forEach((path, index) => {
@@ -250,8 +253,10 @@ export class GameScene extends BaseScene {
 
   onGameEnded = (evt: GameEndedEvent) => {
     this.endedTime = evt.endedAt
-    this.finalScore = { captured: evt.score.captured, total: evt.score.total };
-    this.playSe('finish');
+    const { captured, total } = evt.score
+    const isWin = getIsWin(captured, total);
+    this.finalScore = { captured, total };
+    this.playSe(isWin ? 'win' : 'lose');
     this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
     this.house.position.set(650 * TRACK_SCALE, 200);
     this.addChild(this.house)
@@ -299,7 +304,7 @@ export class GameScene extends BaseScene {
     this.finalShowed = true
 
     const { captured, total } = this.finalScore;
-    const isWin = captured >= total * 0.8;
+    const isWin = getIsWin(captured, total);
 
     const winBg = new PIXI.Sprite(PIXI.Texture.from(isWin ? winBgImg : loseBgImg));
     winBg.alpha = 0;
@@ -360,4 +365,8 @@ export class GameScene extends BaseScene {
       x: 400, duration: 1, repeat: 0,
     });
   }
+}
+
+function getIsWin(captured: number, total: number): boolean {
+  return captured >= total * 0.8;
 }
