@@ -36,9 +36,7 @@ import {
 
 import bgImg from '@/assets/bg.jpg';
 import groundImg from '@/assets/ground.png';
-import cloud1Img from '@/assets/cloud1.png';
-import cloud2Img from '@/assets/cloud2.png';
-import cloud3Img from '@/assets/cloud3.png';
+
 import houseImg from '@/assets/house.png';
 import winBgImg from '@/assets/win_bg.jpg';
 import loseBgImg from '@/assets/lose_bg.png';
@@ -56,6 +54,13 @@ import {
 
 type SeName = 'miss' | 'hit' | 'show'
 
+const cloudAssets = Object.values(import.meta.glob('@/assets/cloud*.png', { eager: true, as: 'url' }))
+const CLOUD_MINIFEST = [
+  { scale: [0.2, 0.2], position: [40, 50] },
+  { scale: [0.2, 0.2], position: [420, 30] },
+  { scale: [0.2, 0.2], position: [1100, 70] },
+]
+
 /**
  * base 1 second for 100px on screen,
  * TRACK_SCALE = 2 => 1 second for 200px
@@ -72,8 +77,8 @@ export class GameScene extends BaseScene {
     ...HittedChicken.assets,
     ...Root.assets,
     ...Potato.assets,
+    ...cloudAssets,
     bgImg, groundImg,
-    cloud1Img, cloud2Img, cloud3Img,
     houseImg,
     winBgImg, loseBgImg, finishPanelImg, againBtnImg,
   ]
@@ -192,26 +197,19 @@ export class GameScene extends BaseScene {
     this.ground.position.y = 600
     this.addChild(this.ground)
 
-    const cloud1 = new PIXI.Sprite(PIXI.Assets.get(cloud1Img))
-    cloud1.scale.set(0.2, 0.2)
-    cloud1.position.set(40, 50)
-    this.addChild(cloud1)
+    cloudAssets.forEach((path, index) => {
+      const cloud = new PIXI.Sprite(PIXI.Assets.get(path))
+      const minifest = CLOUD_MINIFEST[index]
+      cloud.scale.set(...minifest.scale)
+      cloud.position.set(...minifest.position)
 
-    const cloud2 = new PIXI.Sprite(PIXI.Assets.get(cloud2Img))
-    cloud2.scale.set(0.2, 0.2)
-    cloud2.position.set(420, 30)
-    this.addChild(cloud2)
-
-    const cloud3 = new PIXI.Sprite(PIXI.Assets.get(cloud3Img))
-    cloud3.scale.set(0.2, 0.2)
-    cloud3.position.set(1100, 70)
-    this.addChild(cloud3)
+      this.addChild(cloud)
+    })
 
     this.chickenContainer = new PIXI.Container()
     this.chickenContainer.position.set(CHICKEN_CONTAINER_INIT_X, 440);
     this.addChild(this.chickenContainer)
 
-    this._onSpawnChicken = this.evtSpawnChicken.subscribe(this.onSpawnChicken)
 
     this.root = new Root(240, 530)
     this.addChild(this.root)
@@ -224,6 +222,7 @@ export class GameScene extends BaseScene {
     this.evtGameHit.subscribe(this.onGameHit)
     this._onGameHitted = this.evtGameHitted.subscribe(this.onGameHitted)
     this._onGameMissed = this.evtGameMissed.subscribe(this.onGameMissed)
+    this._onSpawnChicken = this.evtSpawnChicken.subscribe(this.onSpawnChicken)
   }
 
   onUpdate = (delta: number) => {
