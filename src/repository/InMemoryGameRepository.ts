@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 
 import { IGameRepository } from './IGameRepository'
-import { Game, GameState, Enemy } from '../entities'
+import { Game, GameState } from '../entities'
 import {
   GameCreatedEvent,
   GameStartedEvent,

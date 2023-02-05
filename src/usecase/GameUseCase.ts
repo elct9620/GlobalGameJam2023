@@ -3,7 +3,6 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 import * as uuid from 'uuid';
 
-import { Enemy } from '../entities'
 import type { IGameRepository, ITrackRepository } from '../repository'
 import { HitService, SeekService } from '../services'
 import { GameHitEvent } from '../events'

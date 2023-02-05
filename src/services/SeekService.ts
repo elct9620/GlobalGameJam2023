@@ -1,4 +1,4 @@
-import { Game, Enemy } from '../entities'
+import { Game } from '../entities'
 
 export class SeekService {
   private readonly game: Game

@@ -70,7 +70,6 @@ type SeName = 'miss' | 'hit' | 'show'
 const TRACK_SCALE = 4;
 
 const CHICKEN_CONTAINER_INIT_X = 200;
-const NOTE_AFTER = 200;
 const COOL_DOWN = 350;
 const ENDED_SLOW_DOWN_DURATION = 5000;
 

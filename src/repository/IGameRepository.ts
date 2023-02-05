@@ -1,4 +1,4 @@
-import { Game, Enemy } from '../entities'
+import { Game } from '../entities'
 
 export interface IGameRepository {
   Find(id: string): Game
