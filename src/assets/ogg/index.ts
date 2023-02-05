@@ -2,8 +2,8 @@
 // import bgmOgg from './audio_music-main_ONLY NOTE.ogg'
 import bgmOgg from './audio_music-main_WITH NOTE.ogg'
 
-import notesMidi from './easy-Level_V1.mid'
-// import notesMidi from './easy-Level_V2.mid'
+// import notesMidi from './easy-Level_V1.mid'
+import notesMidi from './easy-Level_V2.mid'
 
 import seChickenHitOgg1 from './audio_G_get-hit_01.ogg'
 import seChickenHitOgg2 from './audio_G_get-hit_02.ogg'
