@@ -6,6 +6,7 @@ import 'reflect-metadata'
 import gsap from 'gsap'
 
 import { BaseScene } from './BaseScene'
+import { Chicken } from './objects'
 import { GameUseCase } from '../usecase'
 import {
   GameStartedEvent,
@@ -102,7 +103,6 @@ export class GameScene extends BaseScene {
   private started: boolean = false;
   private endedTime?: number;
 
-  private _chickenTextures: PIXI.Texture[] = []
   private _chickenHittedTextures: PIXI.Texture[] = []
   private _chickens: PIXI.AnimatedSprite[] = []
 
@@ -231,19 +231,14 @@ export class GameScene extends BaseScene {
     this.chickenContainer.position.set(CHICKEN_CONTAINER_INIT_X, 440);
     this.addChild(this.chickenContainer)
 
-    this._chickenTextures = [
-      PIXI.Texture.from(chickenImg0),
-      PIXI.Texture.from(chickenImg1),
-      PIXI.Texture.from(chickenImg2),
-    ]
-
     this._chickenHittedTextures = [
       PIXI.Texture.from(chickenHitImg0),
       PIXI.Texture.from(chickenHitImg1),
     ]
 
     this._onSpawnChicken = this.evtSpawnChicken.subscribe(evt => {
-      const chicken = this.spawnChicken(evt.position.x, evt.position.y)
+      const chicken = new Chicken(evt.position.x, evt.position.y)
+      chicken.play()
       this._chickens[evt.index] = chicken
 
       if(this.notes) {
@@ -376,16 +371,6 @@ export class GameScene extends BaseScene {
     this._onGameHitted?.unsubscribe()
     this._onGameMissed?.unsubscribe()
     this._onSpawnChicken?.unsubscribe()
-  }
-
-  spawnChicken(x: number, y: number): PIXI.AnimatedSprite {
-    const chicken = new PIXI.AnimatedSprite(this._chickenTextures)
-    chicken.scale.set(0.5, 0.5)
-    chicken.position.set(x, y)
-    chicken.animationSpeed = 0.25;
-    chicken.play();
-
-    return chicken
   }
 
   spawnHittedChicken(x: number, y: number): PIXI.AnimatedSprite {
