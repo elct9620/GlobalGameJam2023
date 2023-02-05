@@ -5,4 +5,5 @@ export interface IGameRepository {
   Create(id: string): Game
   RefreshState(game: Game): void
   CommitSpawn(game: Game, idx: number): void
+  SaveCaptured(game: Game, idx: number): void
 }

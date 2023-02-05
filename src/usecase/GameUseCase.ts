@@ -4,11 +4,13 @@ import 'reflect-metadata';
 import * as uuid from 'uuid';
 
 import type { IGameRepository, ITrackRepository } from '../repository'
+import { HitService } from '../services/HitService'
 import { GameHitEvent } from '../events'
 import * as types from '../types'
 
 export type HitResult = {
   type: string
+  meta?: { [key: string]: any }
 }
 
 @injectable()
@@ -52,8 +54,14 @@ export class GameUseCase {
     }
 
     if(game.canAction) {
+      const service = new HitService(game)
+      const target = service.findHittedEnemy()
+      const index = game.capture(target)
+      this.gameRepo.SaveCaptured(game, index)
+
       this.evtGameHit.next({ id })
-      return { type: 'action' }
+
+      return { type: 'action', meta: { index } }
     }
 
     return { type: 'error' }

@@ -64,4 +64,7 @@ export class InMemoryGameRepository implements IGameRepository {
     const enemy = game.enemies[index]
     this.evtSpawnChicken.next({ index, position: enemy.toPosition() })
   }
+
+  SaveCaptured(_game: Game, _index: number) {
+  }
 }

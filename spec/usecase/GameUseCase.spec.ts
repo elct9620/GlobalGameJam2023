@@ -68,6 +68,51 @@ describe('hit', () => {
     ctx.usecase.SetTrack(id, 'Music.mid')
     expect(ctx.usecase.Hit(id)).toHaveProperty('type', 'started')
   })
+
+  describe('when game is started without track', () => {
+    it<GameUseCaseContext>('is expected to have type action', (ctx) => {
+      const id = ctx.usecase.CreateGame()
+      ctx.usecase.SetTrack(id, 'Music.mid')
+      ctx.usecase.Hit(id)
+
+      expect(ctx.usecase.Hit(id)).toHaveProperty('type', 'action')
+    })
+
+    it<GameUseCaseContext>('is expected to have meta index -1', (ctx) => {
+      const id = ctx.usecase.CreateGame()
+      ctx.usecase.SetTrack(id, 'Music.mid')
+      ctx.usecase.Hit(id)
+
+      expect(ctx.usecase.Hit(id)).toHaveProperty('meta', { index: - 1})
+    })
+  })
+
+  describe('when game is started with track and hitted', () => {
+    it<GameUseCaseContext>('is expected to have meta index 0', (ctx) => {
+      const track = Container.resolve<TrackUseCase>(TrackUseCase)
+      track.Load('Music.mid', [{ time: 0 }])
+
+      const id = ctx.usecase.CreateGame()
+      ctx.usecase.SetTrack(id, 'Music.mid')
+      ctx.usecase.Hit(id)
+      ctx.usecase.SpawnChicken(id)
+
+      expect(ctx.usecase.Hit(id)).toHaveProperty('meta', { index: 0 })
+    })
+  })
+
+  describe('when game is started with track and not hitted', () => {
+    it<GameUseCaseContext>('is expected to have meta index -1', (ctx) => {
+      const track = Container.resolve<TrackUseCase>(TrackUseCase)
+      track.Load('Music.mid', [{ time: 1000 }])
+
+      const id = ctx.usecase.CreateGame()
+      ctx.usecase.SetTrack(id, 'Music.mid')
+      ctx.usecase.Hit(id)
+
+      expect(ctx.usecase.Hit(id)).toHaveProperty('meta', { index: -1 })
+    })
+  })
 })
 
 describe('spawn', () => {
