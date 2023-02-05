@@ -34,8 +34,6 @@ import cloud3Img from '@/assets/cloud3.png';
 import chickenImg0 from '@/assets/chicken/0.png';
 import chickenImg1 from '@/assets/chicken/1.png';
 import chickenImg2 from '@/assets/chicken/2.png';
-import bgmOgg from '@/assets/track1/bgm.ogg';
-import notesMidi from '@/assets/track1/notes.mid';
 import rootImg0 from '@/assets/root/0.png';
 import rootImg1 from '@/assets/root/1.png';
 import rootImg2 from '@/assets/root/2.png';
@@ -47,20 +45,14 @@ import chickenHitImg0 from '@/assets/chickenHit/0.png';
 import chickenHitImg1 from '@/assets/chickenHit/1.png';
 import houseImg from '@/assets/house.png';
 
-import seChickenHitOgg1 from '@/assets/se/audio_G_get-hit_01.ogg';
-import seChickenHitOgg2 from '@/assets/se/audio_G_get-hit_02.ogg';
-import seChickenHitOgg3 from '@/assets/se/audio_G_get-hit_03.ogg';
-import seChickenHitOgg4 from '@/assets/se/audio_G_get-hit_04.ogg';
-import seChickenMissOgg1 from '@/assets/se/audio_G_miss_01.ogg';
-import seChickenMissOgg2 from '@/assets/se/audio_G_miss_02.ogg';
-import seChickenNormalOgg1 from '@/assets/se/audio_G_normal_01.ogg';
-import seChickenNormalOgg2 from '@/assets/se/audio_G_normal_02.ogg';
-import seChickenNormalOgg3 from '@/assets/se/audio_G_normal_03.ogg';
-import seChickenNormalOgg4 from '@/assets/se/audio_G_normal_04.ogg';
-import seChickenNormalOgg5 from '@/assets/se/audio_G_normal_05.ogg';
-import seChickenShowOgg1 from '@/assets/se/audio_us_show_01.ogg';
-import seChickenShowOgg2 from '@/assets/se/audio_us_show_02.ogg';
-import seChickenShowOgg3 from '@/assets/se/audio_us_show_01.ogg';
+import {
+  bgmOgg, notesMidi,
+
+  seChickenHitOgg1, seChickenHitOgg2, seChickenHitOgg3, seChickenHitOgg4,
+  seChickenMissOgg1, seChickenMissOgg2,
+  seChickenNormalOgg1, seChickenNormalOgg2, seChickenNormalOgg3, seChickenNormalOgg4, seChickenNormalOgg5,
+  seUsShowOgg1, seUsShowOgg2, seUsShowOgg3,
+} from '@/assets/ogg/'
 
 interface Note {
   time: number, data: number[],
@@ -179,7 +171,7 @@ export class GameScene extends BaseScene {
     )
     this.seBuffers.show = await Promise.all(
       [
-        seChickenShowOgg1, seChickenShowOgg2, seChickenShowOgg3,
+        seUsShowOgg1, seUsShowOgg2, seUsShowOgg3,
       ].map(ogg => (
         loadAudioBuffer(ogg, this.audioContext!)
       ))
@@ -324,6 +316,7 @@ export class GameScene extends BaseScene {
     this._onGameHitted = this.evtGameHitted.subscribe(evt => {
       this.score++
 
+      this.nextNote()
       this.playSe('hit')
       setTimeout(() => {
         const targetChicken: PIXI.AnimatedSprite | undefined = this._chickens[evt.index]
