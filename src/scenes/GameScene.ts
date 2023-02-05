@@ -51,7 +51,7 @@ import {
   seChickenMissOgg1, seChickenMissOgg2,
   seChickenNormalOgg1, seChickenNormalOgg2, seChickenNormalOgg3, seChickenNormalOgg4, seChickenNormalOgg5,
   seUsShowOgg1, seUsShowOgg2, seUsShowOgg3, seUsHitGetOgg1,
-  seUsHit1, seUsHit2, seUsMiss1,
+  seUsHit1, seUsHit2,
   bgmFinishWinOgg1, bgmFinishLoseOgg2,
 } from '@/assets/ogg/'
 
@@ -169,7 +169,7 @@ export class GameScene extends BaseScene {
     await this.sfx.show.add(seUsShowOgg1, seUsShowOgg2, seUsShowOgg3, seUsHitGetOgg1)
 
     this.sfx.cast = new AudioController(this.audioContext)
-    await this.sfx.cast.add(seUsHit1, seUsHit2, seUsMiss1)
+    await this.sfx.cast.add(seUsHit1, seUsHit2)
 
     this.sfx.win = new AudioController(this.audioContext)
     this.sfx.win.add(bgmFinishWinOgg1)

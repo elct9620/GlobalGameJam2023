@@ -39,9 +39,10 @@ export {
   seChickenMissOgg1, seChickenMissOgg2,
   seChickenNormalOgg1, seChickenNormalOgg2, seChickenNormalOgg3, seChickenNormalOgg4, seChickenNormalOgg5,
   seUsShowOgg1, seUsShowOgg2, seUsShowOgg3,
-  seUsHit1, seUsHit2, seUsMiss1, seUsHitGetOgg1,
+  seUsHit1, seUsHit2, seUsHitGetOgg1,
   bgmFinishWinOgg1, bgmFinishLoseOgg2,
 
+  seUsMiss1,
   seFinishLoseOgg1, seFinishWinOgg1,
   bgmOpeningLoopOgg, sfxUiClickOgg,
 }
