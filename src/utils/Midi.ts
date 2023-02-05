@@ -1,32 +1,18 @@
-import MidiParser from 'midi-parser-js'
+import { Midi } from '@tonejs/midi'
 
-export function loadMidi(src: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    fetch(src).then(r => r.arrayBuffer()).then(midiData => {
-      resolve(MidiParser.Uint8(new Uint8Array(midiData)));
-    }).catch(reject);
-  });
+export function loadMidi(src: string): Promise<Midi> {
+  return Midi.fromUrl(src);
 }
 
 interface Note {
-  time: number, data: number[],
+  time: number, data: any,
 }
-const INIT_MIDI_STATE = { notes: [], accTime: -400 }
-export function encodeMidi(midi: any, speed: number) {
-  return midi.track[0].event.reduce((
-    { notes, accTime }: { notes: Note[], accTime: number }, event: any
-  ) => {
-    if (event.type === 9 && event.data?.[1] === 80) {
-      const newAccTime = accTime + event.deltaTime / (midi.timeDivision * speed) * 1000 + 400;
-      const note = { time: newAccTime, data: event.data };
-
-      return { notes: [...notes, note], accTime: newAccTime };
-    }
-
-    return { notes, accTime }
-  }, INIT_MIDI_STATE)
+export function encodeMidi(midi: Midi): { notes: Note[] } {
+  return {
+    notes: midi.tracks[0].notes.map(n => ({ time: n.time * 1000, data: n }))
+  };
 }
 
-export async function encodeMidiFrom(src: string, speed: number) {
-  return encodeMidi(await loadMidi(src), speed)
+export async function encodeMidiFrom(src: string) {
+  return encodeMidi(await loadMidi(src))
 }

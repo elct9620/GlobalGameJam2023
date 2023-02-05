@@ -177,7 +177,7 @@ export class GameScene extends BaseScene {
     this.sfx.lose = new AudioController(this.audioContext)
     this.sfx.lose.add(bgmFinishLoseOgg2)
 
-    const { notes } = await encodeMidiFrom(notesMidi, 2.5)
+    const { notes } = await encodeMidiFrom(notesMidi)
     this.evtLoadTrack.next({ id: notesMidi, notes: notes })
   }
 
