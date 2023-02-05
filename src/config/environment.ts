@@ -16,7 +16,7 @@ const app = new PIXI.Application({
   background: 'transparent',
 });
 app.stage.cullable = true
-app.ticker.add(delta => { Container.get<Subject<TickEvent>>(TickEventType).next({ delta }) })
+app.ticker.add(delta => { Container.get<Subject<TickEvent>>(TickEventType).next({ delta, deltaMS: app.ticker.deltaMS }) })
 
 const keyboard$ = Container.get<Subject<KeyboardEvent>>(KeyboardEventType)
 window.addEventListener('keydown', (evt: globalThis.KeyboardEvent) => {

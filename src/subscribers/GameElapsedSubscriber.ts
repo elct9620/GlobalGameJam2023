@@ -21,7 +21,7 @@ export class GameElapsedSubscriber implements Observer<TickEvent> {
   next(event: TickEvent) {
     const id = this.sessionUsecase.CurrentGameID()
     if(id) {
-      this.gameUsecase.ElapseGameTime(id, event.delta)
+      this.gameUsecase.ElapseGameTime(id, event.deltaMS)
     }
   }
 
