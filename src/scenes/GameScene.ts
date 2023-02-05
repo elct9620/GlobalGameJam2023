@@ -9,6 +9,7 @@ import { BaseScene } from './BaseScene'
 import { GameUseCase } from '../usecase'
 import {
   GameStartedEvent,
+  GameEndedEvent,
   GameHitEvent,
   GameHittedEvent,
   GameMissedEvent,
@@ -18,6 +19,7 @@ import {
 } from '../events'
 import {
   GameStartedEvent as GameStartedEventType,
+  GameEndedEvent as GameEndedEventType,
   GameHitEvent as GameHitEventType,
   GameHittedEvent as GameHittedEventType,
   GameMissedEvent as GameMissedEventType,
@@ -91,7 +93,6 @@ export class GameScene extends BaseScene {
   private audioContext?: AudioContext;
   private bgm?: AudioBufferSourceNode;
   private seBuffers: Partial<Record<SeName, AudioBuffer[]>> = {};
-  private currentNoteIndex: number = 0;
   private notes?: Note[];
   private chickenContainer?: PIXI.Container;
   private house?: PIXI.Sprite;
@@ -100,14 +101,13 @@ export class GameScene extends BaseScene {
   private potatoCasting?: PIXI.AnimatedSprite;
   private started: boolean = false;
   private endedTime?: number;
-  private score = 0;
-  private missed = 0;
 
   private _chickenTextures: PIXI.Texture[] = []
   private _chickenHittedTextures: PIXI.Texture[] = []
   private _chickens: PIXI.AnimatedSprite[] = []
 
   private _onGameStarted?: Subscription
+  private _onGameEnded?: Subscription
   private _onGameHit?: Subscription
   private _onGameHitted?: Subscription
   private _onGameMissed?: Subscription
@@ -115,6 +115,7 @@ export class GameScene extends BaseScene {
 
   private readonly usecase: GameUseCase
   private readonly evtGameStarted: Subject<GameStartedEvent>
+  private readonly evtGameEnded: Subject<GameEndedEvent>
   private readonly evtGameHit: Subject<GameHitEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
   private readonly evtGameMissed: Subject<GameMissedEvent>
@@ -125,6 +126,7 @@ export class GameScene extends BaseScene {
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
     @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
+    @inject(GameEndedEventType) evtGameEnded: Subject<GameEndedEvent>,
     @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
@@ -135,6 +137,7 @@ export class GameScene extends BaseScene {
     super()
     this.usecase = usecase
     this.evtGameStarted = evtGameStarted
+    this.evtGameEnded = evtGameEnded
     this.evtGameHit = evtGameHit
     this.evtGameHitted = evtGameHitted
     this.evtGameMissed = evtGameMissed
@@ -287,9 +290,6 @@ export class GameScene extends BaseScene {
 
     this._onGameStarted = this.evtGameStarted.subscribe(() => {
       this.started = true
-      this.score = 0
-      this.missed = 0
-      this.currentNoteIndex = 0
       this.bgm?.start()
       this.playSe('show')
       console.log('start!')
@@ -313,9 +313,6 @@ export class GameScene extends BaseScene {
     })
 
     this._onGameHitted = this.evtGameHitted.subscribe(evt => {
-      this.score++
-
-      this.nextNote()
       this.playSe('hit')
       setTimeout(() => {
         const targetChicken: PIXI.AnimatedSprite | undefined = this._chickens[evt.index]
@@ -327,6 +324,13 @@ export class GameScene extends BaseScene {
 
     this._onGameMissed = this.evtGameMissed.subscribe(() => {
       this.playSe('miss')
+    })
+
+    this._onGameEnded = this.evtGameEnded.subscribe(() => {
+      this.endedTime = Date.now()
+      this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
+      this.house.position.set(650 * TRACK_SCALE, 200);
+      this.addChild(this.house)
     })
   }
 
@@ -348,18 +352,6 @@ export class GameScene extends BaseScene {
     }
   }
 
-  nextNote = () => {
-    if (this.notes && this.currentNoteIndex < this.notes.length - 1) {
-      this.currentNoteIndex++
-    } else if (!this.endedTime) {
-      console.log('ended', { score: this.score, missed: this.missed })
-      this.endedTime = Date.now()
-      this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
-      this.house.position.set(650 * TRACK_SCALE, 200);
-      this.addChild(this.house)
-    }
-  }
-
   playSe = (seName: SeName) => {
     if (this.audioContext) {
       const candidates = this.seBuffers[seName];
@@ -374,6 +366,7 @@ export class GameScene extends BaseScene {
 
   onDestroyed = () => {
     this._onGameStarted?.unsubscribe()
+    this._onGameEnded?.unsubscribe()
     this._onGameHit?.unsubscribe()
     this._onGameHitted?.unsubscribe()
     this._onGameMissed?.unsubscribe()

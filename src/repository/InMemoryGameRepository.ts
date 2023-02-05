@@ -84,7 +84,7 @@ export class InMemoryGameRepository implements IGameRepository {
     })
 
     if(game.mayEnded) {
-      if(!game.enemies[game.seekIndex].captured) {
+      if(!game.enemies[game.seekIndex]?.captured) {
         this.evtGameMissed.next({
           id: game.ID,
           index: game.seekIndex,
