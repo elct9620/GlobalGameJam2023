@@ -88,12 +88,12 @@ export class GameScene extends BaseScene {
   private notes?: Note[];
   private chickenContainer?: PIXI.Container;
   private house?: PIXI.Sprite;
-  private root?: PIXI.AnimatedSprite;
   private started: boolean = false;
   private endedTime?: number;
 
   private potato?: Potato
-  private _chickens: PIXI.AnimatedSprite[] = []
+  private root?: Root;
+  private _chickens: Chicken[] = []
 
   private _onGameStarted?: Subscription
   private _onGameEnded?: Subscription
