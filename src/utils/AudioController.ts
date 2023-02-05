@@ -5,7 +5,6 @@ export class AudioController {
   private buffers: AudioBuffer[] = []
 
   constructor(context?: AudioContext) {
-    console.log(context)
     this.context = context || new AudioContext()
   }
 
