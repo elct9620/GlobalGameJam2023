@@ -66,7 +66,6 @@ type SeName = 'miss' | 'hit' | 'show'
 const TRACK_SCALE = 4;
 
 const CHICKEN_CONTAINER_INIT_X = 200;
-const COOL_DOWN = 350;
 const ENDED_SLOW_DOWN_DURATION = 5000;
 
 @injectable()
@@ -264,17 +263,6 @@ export class GameScene extends BaseScene {
 
       this.root.gotoAndPlay(0)
       this.potato?.cast()
-
-      /*
-      if (this.potatoNormal?.visible && this.potatoCasting) {
-        this.potatoNormal.visible = false;
-        this.potatoCasting.visible = true;
-        setTimeout(() => {
-          this.potatoNormal!.visible = true;
-          this.potatoCasting!.visible = false;
-        }, COOL_DOWN);
-      }
-      */
     })
 
     this._onGameHitted = this.evtGameHitted.subscribe(evt => {
