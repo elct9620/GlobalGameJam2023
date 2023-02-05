@@ -4,7 +4,7 @@ import * as PIXI from 'pixi.js'
 import 'reflect-metadata'
 import gsap from 'gsap'
 
-import { loadAudioBuffer, loadMidi } from '../utils'
+import { loadAudioBuffer, encodeMidiFrom } from '../utils'
 import { BaseScene } from './BaseScene'
 import {
   Chicken,
@@ -176,16 +176,7 @@ export class GameScene extends BaseScene {
       ))
     )
 
-    const midi = await loadMidi(notesMidi);
-    const MIDI_SPEED = 2.5;
-    const { notes } = midi.track[0].event.reduce(({ notes, accTime }: { notes: Note[], accTime: number }, event: any) => {
-      if (event.type === 9 && event.data?.[1] === 80) {
-        const newAccTime = accTime + event.deltaTime / (midi.timeDivision * MIDI_SPEED) * 1000 + 400;
-        const note = { time: newAccTime, data: event.data };
-        return { notes: [...notes, note], accTime: newAccTime };
-      }
-      return { notes, accTime }
-    }, { notes: [], accTime: -400 });
+    const { notes } = await encodeMidiFrom(notesMidi, 2.5)
     this.evtLoadTrack.next({ id: notesMidi, notes: notes })
   }
 
