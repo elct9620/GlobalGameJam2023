@@ -77,4 +77,15 @@ export class Game {
     this._enemies.push(new Enemy(time))
     return this._enemies.length - 1
   }
+
+  capture(index: number): number {
+    const enemies = [...this._enemies]
+    const enemy = enemies[index]
+    if(!enemy) return -1
+
+    enemies[index] = enemy.capture()
+    this._enemies = enemies
+
+    return index
+  }
 }

@@ -31,11 +31,29 @@ describe('findHittedEnemy', () => {
     })
   })
 
+  describe('when seek to 200 and index 0 is captured', () => {
+    it<HitServiceContext>('is expected to find 1', (ctx) => {
+      ctx.game.seekTo(200)
+      ctx.game.capture(0)
+      const service = new HitService(ctx.game)
+      expect(service.findHittedEnemy()).toBe(1)
+    })
+  })
+
   describe('when seek to 600', () => {
     it<HitServiceContext>('is expected to find 1', (ctx) => {
       ctx.game.seekTo(600)
       const service = new HitService(ctx.game)
       expect(service.findHittedEnemy()).toBe(1)
+    })
+  })
+
+  describe('when seek to 600 and index 1 is captured', () => {
+    it<HitServiceContext>('is expected to find 2', (ctx) => {
+      ctx.game.capture(1)
+      ctx.game.seekTo(600)
+      const service = new HitService(ctx.game)
+      expect(service.findHittedEnemy()).toBe(2)
     })
   })
 
