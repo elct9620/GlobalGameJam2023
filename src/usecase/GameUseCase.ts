@@ -89,6 +89,9 @@ export class GameUseCase {
       const missed: number[] = service.findMissed(currentIndex, index)
 
       game.updateSeekState(index)
+      if(game.mayEnded) {
+        game.end()
+      }
       this.gameRepo.RefreshSeekState(game, missed)
 
       return { time, index }

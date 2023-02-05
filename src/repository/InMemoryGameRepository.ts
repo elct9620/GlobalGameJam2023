@@ -7,6 +7,7 @@ import { Game, GameState, Enemy } from '../entities'
 import {
   GameCreatedEvent,
   GameStartedEvent,
+  GameEndedEvent,
   GameHittedEvent,
   GameMissedEvent,
   SpawnChickenEvent,
@@ -14,6 +15,7 @@ import {
 import {
   GameCreatedEvent as GameCreatedEventType,
   GameStartedEvent as GameStartedEventType,
+  GameEndedEvent as GameEndedEventType,
   GameHittedEvent as GameHittedEventType,
   GameMissedEvent as GameMissedEventType,
   SpawnChickenEvent as SpawnChickenEventType,
@@ -26,6 +28,7 @@ export class InMemoryGameRepository implements IGameRepository {
   private collection: GameCollection = {}
   private readonly evtGameCreated: Subject<GameCreatedEvent>
   private readonly evtGameStarted: Subject<GameStartedEvent>
+  private readonly evtGameEnded: Subject<GameEndedEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
   private readonly evtGameMissed: Subject<GameMissedEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
@@ -33,12 +36,14 @@ export class InMemoryGameRepository implements IGameRepository {
   constructor(
     @inject(GameCreatedEventType) evtGameCreated: Subject<GameCreatedEvent>,
     @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
+    @inject(GameEndedEventType) evtGameEnded: Subject<GameEndedEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
     this.evtGameCreated = evtGameCreated
     this.evtGameStarted = evtGameStarted
+    this.evtGameEnded = evtGameEnded
     this.evtGameHitted = evtGameHitted
     this.evtGameMissed = evtGameMissed
     this.evtSpawnChicken = evtSpawnChicken
@@ -77,6 +82,17 @@ export class InMemoryGameRepository implements IGameRepository {
         index,
       })
     })
+
+    if(game.mayEnded) {
+      if(!game.enemies[game.seekIndex].captured) {
+        this.evtGameMissed.next({
+          id: game.ID,
+          index: game.seekIndex,
+        })
+      }
+
+      this.evtGameEnded.next({ id: game.ID })
+    }
   }
 
   CommitSpawn(game: Game, index: number) {

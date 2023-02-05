@@ -56,9 +56,19 @@ export class Game {
     return this.isStarted
   }
 
+  get mayEnded(): boolean {
+    return this._seekIndex >= this._enemies.length - 1
+  }
+
   start() {
     if(this.canStart) {
       this._state = GameState.Started
+    }
+  }
+
+  end() {
+    if(this.mayEnded) {
+      this._state = GameState.Ended
     }
   }
 
