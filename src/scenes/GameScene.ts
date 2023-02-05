@@ -241,14 +241,6 @@ export class GameScene extends BaseScene {
     this.potato = new Potato(1100, 150)
     this.addChild(this.potato)
 
-    /*
-    this.potatoNormal.scale.set(0.5, 0.5)
-    this.potatoNormal.position.set(1000, -50);
-    this.potatoCasting.scale.set(0.56, 0.56)
-    this.potatoCasting.position.set(950, -50);
-    this.potatoCasting.visible = false;
-    */
-
     this._onGameStarted = this.evtGameStarted.subscribe(() => {
       console.log('this._onGameStarted!')
 
