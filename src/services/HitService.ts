@@ -31,6 +31,7 @@ export class HitService {
 
   private isHitted(enemy: Enemy, currentTime: number): boolean {
     return currentTime - HitService.TOLERATE_EARLY <= enemy.time &&
-           currentTime + HitService.TOLERATE_LATER >= enemy.time
+           currentTime + HitService.TOLERATE_LATER >= enemy.time &&
+           !enemy.captured
   }
 }
