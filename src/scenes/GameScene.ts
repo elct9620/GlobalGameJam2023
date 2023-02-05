@@ -220,12 +220,7 @@ export class GameScene extends BaseScene {
     this.chickenContainer.position.set(CHICKEN_CONTAINER_INIT_X, 440);
     this.addChild(this.chickenContainer)
 
-    this._onSpawnChicken = this.evtSpawnChicken.subscribe(evt => {
-      const chicken = new Chicken(evt.position.x, evt.position.y)
-      chicken.play()
-      this._chickens[evt.index] = chicken
-      this.chickenContainer?.addChild(chicken)
-    })
+    this._onSpawnChicken = this.evtSpawnChicken.subscribe(this.onSpawnChicken)
 
     this.root = new Root(240, 530)
     this.addChild(this.root)
@@ -294,6 +289,22 @@ export class GameScene extends BaseScene {
     }
   }
 
+  onSpawnChicken = (evt: SpawnChickenEvent) => {
+    const chicken = new Chicken(evt.position.x, evt.position.y)
+    chicken.play()
+    this._chickens[evt.index] = chicken
+    this.chickenContainer?.addChild(chicken)
+  }
+
+  onDestroyed = () => {
+    this._onGameStarted?.unsubscribe()
+    this._onGameEnded?.unsubscribe()
+    this._onGameHit?.unsubscribe()
+    this._onGameHitted?.unsubscribe()
+    this._onGameMissed?.unsubscribe()
+    this._onSpawnChicken?.unsubscribe()
+  }
+
   playSe = (seName: SeName) => {
     if (this.audioContext) {
       const candidates = this.seBuffers[seName];
@@ -304,15 +315,6 @@ export class GameScene extends BaseScene {
         se.start();
       }
     }
-  }
-
-  onDestroyed = () => {
-    this._onGameStarted?.unsubscribe()
-    this._onGameEnded?.unsubscribe()
-    this._onGameHit?.unsubscribe()
-    this._onGameHitted?.unsubscribe()
-    this._onGameMissed?.unsubscribe()
-    this._onSpawnChicken?.unsubscribe()
   }
 }
 
