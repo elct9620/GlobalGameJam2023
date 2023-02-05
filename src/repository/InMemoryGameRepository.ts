@@ -8,12 +8,14 @@ import {
   GameCreatedEvent,
   GameStartedEvent,
   GameHittedEvent,
+  GameMissedEvent,
   SpawnChickenEvent,
 } from '../events'
 import {
   GameCreatedEvent as GameCreatedEventType,
   GameStartedEvent as GameStartedEventType,
   GameHittedEvent as GameHittedEventType,
+  GameMissedEvent as GameMissedEventType,
   SpawnChickenEvent as SpawnChickenEventType,
 } from '../types'
 
@@ -25,17 +27,20 @@ export class InMemoryGameRepository implements IGameRepository {
   private readonly evtGameCreated: Subject<GameCreatedEvent>
   private readonly evtGameStarted: Subject<GameStartedEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
+  private readonly evtGameMissed: Subject<GameMissedEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
     @inject(GameCreatedEventType) evtGameCreated: Subject<GameCreatedEvent>,
     @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
+    @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
     this.evtGameCreated = evtGameCreated
     this.evtGameStarted = evtGameStarted
     this.evtGameHitted = evtGameHitted
+    this.evtGameMissed = evtGameMissed
     this.evtSpawnChicken = evtSpawnChicken
   }
 
@@ -65,7 +70,13 @@ export class InMemoryGameRepository implements IGameRepository {
     }
   }
 
-  RefreshSeekState(_game: Game, _missed: Enemy[]) {
+  RefreshSeekState(game: Game, missed: number[]) {
+    missed.forEach(index => {
+      this.evtGameMissed.next({
+        id: game.ID,
+        index,
+      })
+    })
   }
 
   CommitSpawn(game: Game, index: number) {

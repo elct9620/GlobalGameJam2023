@@ -24,9 +24,9 @@ export class SeekService {
     return idx >= enemiesCount ? enemiesCount - 1 : idx
   }
 
-  findMissed(from: number, to: number): Enemy[] {
+  findMissed(from: number, to: number): number[] {
     const enemies = this.game.enemies
-    let missed: Enemy[] = []
+    let missed: number[] = []
     let idx = from
 
     for(; idx < to; idx++) {
@@ -34,7 +34,7 @@ export class SeekService {
         continue
       }
 
-      missed.push(enemies[idx])
+      missed.push(idx)
     }
 
     return missed

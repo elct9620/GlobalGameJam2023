@@ -11,6 +11,7 @@ import {
   GameStartedEvent,
   GameHitEvent,
   GameHittedEvent,
+  GameMissedEvent,
   SeekEvent,
   SpawnChickenEvent,
   LoadTrackEvent,
@@ -19,6 +20,7 @@ import {
   GameStartedEvent as GameStartedEventType,
   GameHitEvent as GameHitEventType,
   GameHittedEvent as GameHittedEventType,
+  GameMissedEvent as GameMissedEventType,
   SeekEvent as SeekEventType,
   SpawnChickenEvent as SpawnChickenEventType,
   LoadTrackEvent as LoadTrackEventType,
@@ -117,12 +119,14 @@ export class GameScene extends BaseScene {
   private _onGameStarted?: Subscription
   private _onGameHit?: Subscription
   private _onGameHitted?: Subscription
+  private _onGameMissed?: Subscription
   private _onSpawnChicken?: Subscription
 
   private readonly usecase: GameUseCase
   private readonly evtGameStarted: Subject<GameStartedEvent>
   private readonly evtGameHit: Subject<GameHitEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
+  private readonly evtGameMissed: Subject<GameMissedEvent>
   private readonly evtSeek: Subject<SeekEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
   private readonly evtLoadTrack: Subject<LoadTrackEvent>
@@ -132,6 +136,7 @@ export class GameScene extends BaseScene {
     @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
     @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
+    @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SeekEventType) evtSeek: Subject<SeekEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
     @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
@@ -141,6 +146,7 @@ export class GameScene extends BaseScene {
     this.evtGameStarted = evtGameStarted
     this.evtGameHit = evtGameHit
     this.evtGameHitted = evtGameHitted
+    this.evtGameMissed = evtGameMissed
     this.evtSeek = evtSeek
     this.evtSpawnChicken = evtSpawnChicken
     this.evtLoadTrack = evtLoadTrack
@@ -327,6 +333,9 @@ export class GameScene extends BaseScene {
       }, 100)
     })
 
+    this._onGameMissed = this.evtGameMissed.subscribe(() => {
+      this.playSe('miss')
+    })
   }
 
   onUpdate = (delta: number) => {
@@ -343,18 +352,6 @@ export class GameScene extends BaseScene {
       }
       if (this.house) {
         this.house.position.x -= groundSpeed;
-      }
-
-      if (!this.endedTime && this.audioContext && this.notes) {
-        const currentNote = this.notes[this.currentNoteIndex]
-        const currentTime = this.audioContext.currentTime * 1000
-
-        if (currentNote && currentTime > currentNote.time + NOTE_AFTER && this.currentNoteIndex < this.notes.length) {
-          currentNote.miss = true
-          this.missed++
-          this.playSe('miss')
-          this.nextNote()
-        }
       }
     }
   }
@@ -387,6 +384,7 @@ export class GameScene extends BaseScene {
     this._onGameStarted?.unsubscribe()
     this._onGameHit?.unsubscribe()
     this._onGameHitted?.unsubscribe()
+    this._onGameMissed?.unsubscribe()
     this._onSpawnChicken?.unsubscribe()
   }
 

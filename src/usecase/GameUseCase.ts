@@ -86,7 +86,7 @@ export class GameUseCase {
 
       const currentIndex = game.seekIndex
       const index = service.findSeekIndex(currentTime)
-      const missed: Enemy[] = service.findMissed(currentIndex, index)
+      const missed: number[] = service.findMissed(currentIndex, index)
 
       game.updateSeekState(index)
       this.gameRepo.RefreshSeekState(game, missed)
