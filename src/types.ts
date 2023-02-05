@@ -8,6 +8,7 @@ export const GameCreatedEvent = Symbol('GameCreatedEvent')
 export const GameStartedEvent = Symbol('GameStartedEvent')
 export const GameHitEvent = Symbol('GameHitEvent')
 export const GameHittedEvent = Symbol('GameHittedEvent')
+export const GameMissedEvent = Symbol('GameMissedEvent')
 
 export const SeekEvent = Symbol('SeekEvent')
 export const SpawnChickenEvent = Symbol('SpawnChickenEvent')

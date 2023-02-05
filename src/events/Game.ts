@@ -15,6 +15,11 @@ export type GameHittedEvent = {
   index: number
 }
 
+export type GameMissedEvent = {
+  id: string
+  index: number
+}
+
 export type SeekEvent = {
   currentTime: number
 }
