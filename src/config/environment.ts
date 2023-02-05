@@ -4,8 +4,8 @@ import { Subject } from 'rxjs'
 import Manager from '../manager'
 import Container from '../container'
 import { SessionUseCase } from '../usecase'
-import { TickEvent, KeyboardEvent } from '../events'
-import { TickEvent as TickEventType, KeyboardEvent as KeyboardEventType, PlayerID } from '../types'
+import { emitTick, KeyboardEvent } from '../events'
+import { KeyboardEvent as KeyboardEventType, PlayerID } from '../types'
 
 const app = new PIXI.Application({
   view: document.getElementById("view") as HTMLCanvasElement,
@@ -16,7 +16,7 @@ const app = new PIXI.Application({
   background: 'transparent',
 });
 app.stage.cullable = true
-app.ticker.add(delta => { Container.get<Subject<TickEvent>>(TickEventType).next({ delta, deltaMS: app.ticker.deltaMS }) })
+app.ticker.add(delta => { emitTick({ delta, deltaMS: app.ticker.deltaMS }) })
 
 const keyboard$ = Container.get<Subject<KeyboardEvent>>(KeyboardEventType)
 window.addEventListener('keydown', (evt: globalThis.KeyboardEvent) => {

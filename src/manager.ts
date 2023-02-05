@@ -2,9 +2,7 @@ import { injectable } from 'inversify'
 import * as PIXI from 'pixi.js'
 import 'reflect-metadata';
 
-import { Subject } from 'rxjs'
-import { TickEvent } from './events'
-import { TickEvent as TickEventType } from './types'
+import { onTick, TickPayload } from './events'
 import Container from './container'
 
 export interface IScene extends PIXI.Container {
@@ -33,11 +31,7 @@ export default class Manager {
   constructor(app: PIXI.Application) {
     this.app = app
 
-    this.tick.subscribe(this.onUpdate)
-  }
-
-  private get tick(): Subject<TickEvent> {
-    return Container.get<Subject<TickEvent>>(TickEventType)
+    onTick(this.onUpdate)
   }
 
   register(id: string, scene: SceneConstructor) {
@@ -72,7 +66,7 @@ export default class Manager {
     }
   }
 
-  onUpdate = (event: TickEvent) => {
+  onUpdate = (event: TickPayload) => {
     if(!this.currentScene) return
 
     this.currentScene.onUpdate(event.delta)
