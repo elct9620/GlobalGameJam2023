@@ -40,6 +40,10 @@ import cloud1Img from '@/assets/cloud1.png';
 import cloud2Img from '@/assets/cloud2.png';
 import cloud3Img from '@/assets/cloud3.png';
 import houseImg from '@/assets/house.png';
+import winBgImg from '@/assets/win_bg.jpg';
+import loseBgImg from '@/assets/lose_bg.png';
+import finishPanelImg from '@/assets/finish_panel.png';
+import againBtnImg from '@/assets/again_btn.png';
 
 import {
   bgmOgg, notesMidi,
@@ -78,6 +82,7 @@ export class GameScene extends BaseScene {
     bgImg, groundImg,
     cloud1Img, cloud2Img, cloud3Img,
     houseImg,
+    winBgImg, loseBgImg, finishPanelImg, againBtnImg,
   ]
 
   private bg?: PIXI.TilingSprite;
@@ -91,6 +96,8 @@ export class GameScene extends BaseScene {
 
   private started: boolean = false;
   private endedTime?: number;
+  private finalScore?: { captured: number, total: number };
+  private finalShowed: boolean = false;
 
   private potato?: Potato
   private root?: Root;
@@ -238,8 +245,9 @@ export class GameScene extends BaseScene {
   onUpdate = (delta: number) => {
     this.evtSeek.next({ currentTime: (this.audioContext?.currentTime || 0) * 1000 })
 
-    if (this.started) {
+    if (this.started && !this.finalShowed) {
       const slowDown = this.endedTime ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedTime)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
+      if (slowDown <= 0) { this.showFinal() }
       const groundSpeed = delta * 3 * TRACK_SCALE * slowDown;
       if (this.ground) {
         this.ground.tilePosition.x -= groundSpeed;
@@ -261,6 +269,7 @@ export class GameScene extends BaseScene {
 
   onGameEnded = (evt: GameEndedEvent) => {
     this.endedTime = evt.endedAt
+    this.finalScore = { captured: evt.score.captured, total: evt.score.total };
     this.house = new PIXI.Sprite(PIXI.Texture.from(houseImg))
     this.house.position.set(650 * TRACK_SCALE, 200);
     this.addChild(this.house)
@@ -310,5 +319,72 @@ export class GameScene extends BaseScene {
         se.start();
       }
     }
+  }
+
+  showFinal() {
+    if (this.finalShowed || !this.finalScore) return;
+    this.finalShowed = true
+
+    const { captured, total } = this.finalScore;
+    const isWin = captured >= total * 0.8;
+
+    const winBg = new PIXI.Sprite(PIXI.Texture.from(isWin ? winBgImg : loseBgImg));
+    winBg.alpha = 0;
+    this.addChild(winBg);
+    gsap.to(winBg, {
+      alpha: 1, duration: 1, repeat: 0,
+    });
+
+    const panelContainer = new PIXI.Container()
+
+    const finishPanel = new PIXI.Sprite(PIXI.Texture.from(finishPanelImg))
+    finishPanel.position.set(0, 0);
+    panelContainer.addChild(finishPanel);
+
+    const finishText = new PIXI.Text(isWin ? 'WIN' : 'LOSE', {
+      fontSize: 120, fill: '#ffb228', fontWeight: 'bold',
+      dropShadow: true, dropShadowBlur: 15, dropShadowDistance: 0,
+    })
+    finishText.anchor.set(0.5, 0.5);
+    finishText.position.set(380, 80);
+    panelContainer.addChild(finishText);
+
+    const chickenHit = new HittedChicken(0, 0);
+    chickenHit.play()
+    chickenHit.scale.set(0.8, 0.8);
+    chickenHit.position.set(50, 170);
+    panelContainer.addChild(chickenHit);
+
+    const scoreText = new PIXI.Text(captured, {
+      fontSize: 160, fill: '#FBFF37',
+      dropShadow: true, dropShadowBlur: 15, dropShadowDistance: 0,
+    })
+    scoreText.position.set(350, 200)
+    panelContainer.addChild(scoreText)
+
+    const totalText = new PIXI.Text(`/ ${total}`, {
+      fontSize: 54, fill: 'black',
+    })
+    totalText.position.set(530, 290)
+    panelContainer.addChild(totalText)
+
+    if (captured >= total) {
+      const fullCombo = new PIXI.Text(`- Full combo -`, { fontSize: 45, fill: '#b22406' })
+      fullCombo.position.set(350, 380)
+      panelContainer.addChild(fullCombo)
+    }
+
+    const button = new PIXI.Sprite(PIXI.Texture.from(againBtnImg))
+    button.scale.set(0.5, 0.5)
+    button.position.set(300, 450)
+    button.interactive = true;
+    button.on('pointerdown', () => location.reload())
+    panelContainer.addChild(button)
+
+    panelContainer.position.set(1500, 100);
+    this.addChild(panelContainer);
+    gsap.to(panelContainer.position, {
+      x: 400, duration: 1, repeat: 0,
+    });
   }
 }
