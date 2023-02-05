@@ -14,8 +14,6 @@ export const SpawnChickenEvent = Symbol('SpawnChickenEvent')
 
 export const LoadTrackEvent = Symbol('LoadTrackEvent')
 
-export const KeyboardEvent = Symbol('KeyboardEvent')
-
 // Repository
 export const IGameRepository = Symbol('IGameRepository')
 export const IPlayerRepository = Symbol('IPlayerRepository')

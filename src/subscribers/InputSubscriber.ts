@@ -2,11 +2,11 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { Observer } from 'rxjs'
 
-import { KeyboardEvent } from '../events'
+import { KeyboardPayload } from '../events'
 import { GameUseCase, SessionUseCase } from '../usecase'
 
 @injectable()
-export class InputSubscriber implements Observer<KeyboardEvent> {
+export class InputSubscriber implements Observer<KeyboardPayload> {
   static ALLOW_KEYS = [' ']
 
   private readonly game: GameUseCase
@@ -20,7 +20,7 @@ export class InputSubscriber implements Observer<KeyboardEvent> {
     this.session = session
   }
 
-  next(event: KeyboardEvent) {
+  next(event: KeyboardPayload) {
     if(InputSubscriber.ALLOW_KEYS.includes(event.key) && !event.pressed) {
       const id = this.session.CurrentGameID()
       if(id) {
