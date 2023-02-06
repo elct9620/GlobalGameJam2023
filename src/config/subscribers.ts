@@ -10,10 +10,7 @@ events.onInput(Container.resolve<subscribers.InputSubscriber>(subscribers.InputS
 
 events.onGameCreated(Container.resolve<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber))
 
-Container.bind<subscribers.SeekSubscriber>(subscribers.SeekSubscriber).to(subscribers.SeekSubscriber)
-Container.get<Subject<events.SeekEvent>>(types.SeekEvent).subscribe(
-  Container.resolve<subscribers.SeekSubscriber>(subscribers.SeekSubscriber)
-)
+events.onSeek(Container.resolve<subscribers.SeekSubscriber>(subscribers.SeekSubscriber))
 
 Container.bind<subscribers.GameStartedSubscriber>(subscribers.GameStartedSubscriber).to(subscribers.GameStartedSubscriber)
 Container.get<Subject<events.GameStartedEvent>>(types.GameStartedEvent).subscribe(

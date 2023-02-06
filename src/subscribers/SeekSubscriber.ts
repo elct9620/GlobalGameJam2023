@@ -2,11 +2,11 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { Observer } from 'rxjs'
 
-import { SeekEvent } from '../events'
+import { SeekPayload } from '../events'
 import { GameUseCase, SessionUseCase } from '../usecase'
 
 @injectable()
-export class SeekSubscriber implements Observer<SeekEvent> {
+export class SeekSubscriber implements Observer<SeekPayload> {
   private readonly gameUsecase: GameUseCase;
   private readonly sessionUsecase: SessionUseCase;
 
@@ -18,7 +18,7 @@ export class SeekSubscriber implements Observer<SeekEvent> {
     this.sessionUsecase = sessionUsecase
   }
 
-  next(event: SeekEvent) {
+  next(event: SeekPayload) {
     const id = this.sessionUsecase.CurrentGameID()
     if(id) {
       this.gameUsecase.SyncSeek(id, event.currentTime)

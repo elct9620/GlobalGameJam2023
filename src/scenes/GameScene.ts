@@ -19,9 +19,9 @@ import {
   GameHitEvent,
   GameHittedEvent,
   GameMissedEvent,
-  SeekEvent,
   SpawnChickenEvent,
   LoadTrackEvent,
+  emitSeek,
 } from '../events'
 import {
   GameStartedEvent as GameStartedEventType,
@@ -29,7 +29,6 @@ import {
   GameHitEvent as GameHitEventType,
   GameHittedEvent as GameHittedEventType,
   GameMissedEvent as GameMissedEventType,
-  SeekEvent as SeekEventType,
   SpawnChickenEvent as SpawnChickenEventType,
   LoadTrackEvent as LoadTrackEventType,
 } from '../types'
@@ -118,7 +117,6 @@ export class GameScene extends BaseScene {
   private readonly evtGameHit: Subject<GameHitEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
   private readonly evtGameMissed: Subject<GameMissedEvent>
-  private readonly evtSeek: Subject<SeekEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
   private readonly evtLoadTrack: Subject<LoadTrackEvent>
 
@@ -129,7 +127,6 @@ export class GameScene extends BaseScene {
     @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
-    @inject(SeekEventType) evtSeek: Subject<SeekEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
     @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
   ) {
@@ -140,7 +137,6 @@ export class GameScene extends BaseScene {
     this.evtGameHit = evtGameHit
     this.evtGameHitted = evtGameHitted
     this.evtGameMissed = evtGameMissed
-    this.evtSeek = evtSeek
     this.evtSpawnChicken = evtSpawnChicken
     this.evtLoadTrack = evtLoadTrack
   }
@@ -236,7 +232,7 @@ export class GameScene extends BaseScene {
 
     if (this.startedTime && !this.finalShowed) {
       const deltaTime = (Date.now() - this.startedTime) / 1000
-      this.evtSeek.next({ currentTime: (deltaTime || 0) * 1000 })
+      emitSeek({ currentTime: deltaTime * 1000 })
 
       const slowDown = this.endedTime ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedTime)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
       if (slowDown <= 0) { this.showFinal() }

@@ -37,9 +37,12 @@ export type GameMissedEvent = {
   index: number
 }
 
-export type SeekEvent = {
+export const SeekEvent = Symbol('Game::SeekEvent')
+export type SeekPayload = {
   currentTime: number
 }
+export const emitSeek = (payload: SeekPayload) => publish(SeekEvent, payload)
+export const onSeek = (observer: Observer<SeekPayload>) => subscribe(SeekEvent, observer)
 
 type Position = {
   x: number
