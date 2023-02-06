@@ -1,5 +1,5 @@
 import Container from '../container'
-import * as subscribers from '../subscribers'
+import * as subscribers from '../core/subscribers'
 import * as events from '../events'
 
 events.onTick(Container.resolve<subscribers.GameElapsedSubscriber>(subscribers.GameElapsedSubscriber))

@@ -2,9 +2,9 @@ import * as PIXI from 'pixi.js';
 
 import Manager from '../manager'
 import Container from '../container'
-import { SessionUseCase } from '../usecase'
+import { SessionUseCase } from '../core/usecase'
+import { PlayerID } from '../core/types'
 import { emitTick, emitInput } from '../events'
-import { PlayerID } from '../types'
 
 const app = new PIXI.Application({
   view: document.getElementById("view") as HTMLCanvasElement,

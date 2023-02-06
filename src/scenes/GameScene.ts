@@ -12,7 +12,7 @@ import {
   Root,
   Potato,
 } from './objects'
-import { GameUseCase } from '../usecase'
+import { GameUseCase } from '../core/usecase'
 import {
   onGameStarted,
   onGameEnded,

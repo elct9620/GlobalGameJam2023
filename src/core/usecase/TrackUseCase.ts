@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 
-import type { ITrackRepository } from '../../src/repository'
+import type { ITrackRepository } from '../repository'
 import * as types from '../types'
 
 type Note = {

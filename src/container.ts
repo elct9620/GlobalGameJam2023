@@ -1,9 +1,9 @@
 import { Container } from 'inversify'
 import 'reflect-metadata'
 
-import * as usecase from './usecase'
-import * as types from './types'
-import * as repo from './repository'
+import * as usecase from './core/usecase'
+import * as types from './core/types'
+import * as repo from './core/repository'
 
 const container = new Container({ skipBaseClassChecks: true })
 

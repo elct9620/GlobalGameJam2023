@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi} from 'vitest'
 
-import { GameUseCase, TrackUseCase } from '../../src/usecase'
-import Container from '../../src/container'
+import { GameUseCase, TrackUseCase } from '../../../src/core/usecase'
+import Container from '../../../src/container'
 
 interface GameUseCaseContext {
   usecase: GameUseCase
