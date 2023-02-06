@@ -18,7 +18,7 @@ import {
   onGameEnded,
   onGameHit,
   onGameHitted,
-  GameMissedEvent,
+  onGameMissed,
   SpawnChickenEvent,
   emitSeek,
   emitLoadTrack,
@@ -26,7 +26,6 @@ import {
   GameHittedPayload,
 } from '../events'
 import {
-  GameMissedEvent as GameMissedEventType,
   SpawnChickenEvent as SpawnChickenEventType,
 } from '../types'
 
@@ -109,17 +108,14 @@ export class GameScene extends BaseScene {
   private _onSpawnChicken?: Subscription
 
   private readonly usecase: GameUseCase
-  private readonly evtGameMissed: Subject<GameMissedEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
-    @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
     super()
     this.usecase = usecase
-    this.evtGameMissed = evtGameMissed
     this.evtSpawnChicken = evtSpawnChicken
   }
 
@@ -206,7 +202,7 @@ export class GameScene extends BaseScene {
     this._onGameEnded = onGameEnded(this.onGameEnded)
     this._onGameHit = onGameHit(this.onGameHit)
     this._onGameHitted = onGameHitted(this.onGameHitted)
-    this._onGameMissed = this.evtGameMissed.subscribe(this.onGameMissed)
+    this._onGameMissed = onGameMissed(this.onGameMissed)
     this._onSpawnChicken = this.evtSpawnChicken.subscribe(this.onSpawnChicken)
   }
 

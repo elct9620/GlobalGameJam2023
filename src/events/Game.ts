@@ -42,10 +42,13 @@ export type GameHittedPayload = {
 export const emitGameHitted = (payload: GameHittedPayload) => publish(GameHittedEvent, payload)
 export const onGameHitted = (observer: Observer<GameHittedPayload>) => subscribe<GameHittedPayload>(GameHittedEvent, observer)
 
-export type GameMissedEvent = {
+export const GameMissedEvent = Symbol('Game::MissedEvent')
+export type GameMissedPayload = {
   id: string
   index: number
 }
+export const emitGameMissed = (payload: GameMissedPayload) => publish(GameMissedEvent, payload)
+export const onGameMissed = (observer: Observer<GameMissedPayload>) => subscribe<GameMissedPayload>(GameMissedEvent, observer)
 
 export const SeekEvent = Symbol('Game::SeekEvent')
 export type SeekPayload = {

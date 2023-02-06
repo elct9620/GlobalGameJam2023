@@ -9,11 +9,10 @@ import {
   emitGameStarted,
   emitGameEnded,
   emitGameHitted,
-  GameMissedEvent,
+  emitGameMissed,
   SpawnChickenEvent,
 } from '../events'
 import {
-  GameMissedEvent as GameMissedEventType,
   SpawnChickenEvent as SpawnChickenEventType,
 } from '../types'
 
@@ -22,14 +21,11 @@ type GameCollection = { [key: string]: Game }
 @injectable()
 export class InMemoryGameRepository implements IGameRepository {
   private collection: GameCollection = {}
-  private readonly evtGameMissed: Subject<GameMissedEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
-    @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
-    this.evtGameMissed = evtGameMissed
     this.evtSpawnChicken = evtSpawnChicken
   }
 
@@ -61,7 +57,7 @@ export class InMemoryGameRepository implements IGameRepository {
 
   RefreshSeekState(game: Game, missed: number[]) {
     missed.forEach(index => {
-      this.evtGameMissed.next({
+      emitGameMissed({
         id: game.ID,
         index,
       })
@@ -69,7 +65,7 @@ export class InMemoryGameRepository implements IGameRepository {
 
     if(game.mayEnded) {
       if(!game.enemies[game.seekIndex]?.captured) {
-        this.evtGameMissed.next({
+        emitGameMissed({
           id: game.ID,
           index: game.seekIndex,
         })
