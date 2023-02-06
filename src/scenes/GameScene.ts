@@ -16,15 +16,16 @@ import { GameUseCase } from '../usecase'
 import {
   onGameStarted,
   onGameEnded,
-  onGameHit,
   onGameHitted,
   onGameMissed,
   onSpawnChicken,
+  onInput,
   emitSeek,
   emitLoadTrack,
   GameEndedPayload,
   GameHittedPayload,
   SpawnChickenPayload,
+  KeyboardPayload,
 } from '../events'
 
 import bgImg from '@/assets/bg.jpg';
@@ -100,7 +101,7 @@ export class GameScene extends BaseScene {
 
   private _onGameStarted?: Subscription
   private _onGameEnded?: Subscription
-  private _onGameHit?: Subscription
+  private _onInput?: Subscription
   private _onGameHitted?: Subscription
   private _onGameMissed?: Subscription
   private _onSpawnChicken?: Subscription
@@ -195,7 +196,7 @@ export class GameScene extends BaseScene {
 
     this._onGameStarted = onGameStarted(this.onGameStarted)
     this._onGameEnded = onGameEnded(this.onGameEnded)
-    this._onGameHit = onGameHit(this.onGameHit)
+    this._onInput = onInput(this.onInput)
     this._onGameHitted = onGameHitted(this.onGameHitted)
     this._onGameMissed = onGameMissed(this.onGameMissed)
     this._onSpawnChicken = onSpawnChicken(this.onSpawnChicken)
@@ -245,10 +246,12 @@ export class GameScene extends BaseScene {
     this.addChild(this.house)
   }
 
-  onGameHit = () => {
-    this.playSe('cast')
-    this.root?.gotoAndPlay(0)
-    this.potato?.cast()
+  onInput = (evt: KeyboardPayload) => {
+    if(evt.key == ' ' && !evt.pressed) {
+      this.playSe('cast')
+      this.root?.gotoAndPlay(0)
+      this.potato?.cast()
+    }
   }
 
   onGameHitted = (evt: GameHittedPayload) => {

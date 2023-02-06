@@ -4,7 +4,6 @@ import * as uuid from 'uuid';
 
 import type { IGameRepository, ITrackRepository } from '../repository'
 import { HitService, SeekService } from '../services'
-import { emitGameHit } from '../events'
 import * as types from '../types'
 
 export type HitResult = {
@@ -64,8 +63,6 @@ export class GameUseCase {
       if(index >= 0) {
         this.gameRepo.SaveCaptured(game, index)
       }
-
-      emitGameHit({ id })
 
       return { type: 'action', meta: { index } }
     }
