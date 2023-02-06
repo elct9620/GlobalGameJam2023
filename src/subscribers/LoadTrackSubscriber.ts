@@ -2,11 +2,11 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { Observer } from 'rxjs'
 
-import { LoadTrackEvent } from '../events'
+import { LoadTrackPayload } from '../events'
 import { GameUseCase, SessionUseCase, TrackUseCase } from '../usecase'
 
 @injectable()
-export class LoadTrackSubscriber implements Observer<LoadTrackEvent> {
+export class LoadTrackSubscriber implements Observer<LoadTrackPayload> {
   private readonly game: GameUseCase
   private readonly session: SessionUseCase;
   private readonly track: TrackUseCase
@@ -21,7 +21,7 @@ export class LoadTrackSubscriber implements Observer<LoadTrackEvent> {
     this.track = track
   }
 
-  next(event: LoadTrackEvent) {
+  next(event: LoadTrackPayload) {
     const id = this.session.CurrentGameID()
     if(id) {
       this.track.Load(event.id, event.notes)

@@ -9,8 +9,6 @@ export const GameMissedEvent = Symbol('GameMissedEvent')
 
 export const SpawnChickenEvent = Symbol('SpawnChickenEvent')
 
-export const LoadTrackEvent = Symbol('LoadTrackEvent')
-
 // Repository
 export const IGameRepository = Symbol('IGameRepository')
 export const IPlayerRepository = Symbol('IPlayerRepository')

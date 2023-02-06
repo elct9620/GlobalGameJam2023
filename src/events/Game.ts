@@ -61,7 +61,10 @@ type Note = {
   time: number
 }
 
-export type LoadTrackEvent = {
+export const LoadTrackEvent = Symbol('Game::LoadTrackEvent')
+export type LoadTrackPayload = {
   id: string
   notes: Note[]
 }
+export const emitLoadTrack = (payload: LoadTrackPayload) => publish(LoadTrackEvent, payload)
+export const onLoadTrack = (observer: Observer<LoadTrackPayload>) => subscribe(LoadTrackEvent, observer)

@@ -17,8 +17,6 @@ container.bind<Subject<events.GameMissedEvent>>(types.GameMissedEvent).toConstan
 
 container.bind<Subject<events.SpawnChickenEvent>>(types.SpawnChickenEvent).toConstantValue(new Subject<events.SpawnChickenEvent>())
 
-container.bind<Subject<events.LoadTrackEvent>>(types.LoadTrackEvent).toConstantValue(new Subject<events.LoadTrackEvent>())
-
 // Repository
 container.bind<repo.IGameRepository>(types.IGameRepository).to(repo.InMemoryGameRepository).inSingletonScope()
 container.bind<repo.IPlayerRepository>(types.IPlayerRepository).to(repo.SingletonPlayerRepository).inSingletonScope()

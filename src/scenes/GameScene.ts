@@ -20,8 +20,8 @@ import {
   GameHittedEvent,
   GameMissedEvent,
   SpawnChickenEvent,
-  LoadTrackEvent,
   emitSeek,
+  emitLoadTrack,
 } from '../events'
 import {
   GameEndedEvent as GameEndedEventType,
@@ -29,7 +29,6 @@ import {
   GameHittedEvent as GameHittedEventType,
   GameMissedEvent as GameMissedEventType,
   SpawnChickenEvent as SpawnChickenEventType,
-  LoadTrackEvent as LoadTrackEventType,
 } from '../types'
 
 import bgImg from '@/assets/bg.jpg';
@@ -116,7 +115,6 @@ export class GameScene extends BaseScene {
   private readonly evtGameHitted: Subject<GameHittedEvent>
   private readonly evtGameMissed: Subject<GameMissedEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
-  private readonly evtLoadTrack: Subject<LoadTrackEvent>
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
@@ -125,7 +123,6 @@ export class GameScene extends BaseScene {
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
-    @inject(LoadTrackEventType) evtLoadTrack: Subject<LoadTrackEvent>,
   ) {
     super()
     this.usecase = usecase
@@ -134,7 +131,6 @@ export class GameScene extends BaseScene {
     this.evtGameHitted = evtGameHitted
     this.evtGameMissed = evtGameMissed
     this.evtSpawnChicken = evtSpawnChicken
-    this.evtLoadTrack = evtLoadTrack
   }
 
   onCreated = () => {
@@ -170,7 +166,7 @@ export class GameScene extends BaseScene {
     this.sfx.lose.add(bgmFinishLoseOgg2)
 
     const { notes } = await encodeMidiFrom(notesMidi)
-    this.evtLoadTrack.next({ id: notesMidi, notes: notes })
+    emitLoadTrack({ id: notesMidi, notes: notes })
   }
 
   onLoaded = () => {
