@@ -57,15 +57,16 @@ export type SeekPayload = {
 export const emitSeek = (payload: SeekPayload) => publish(SeekEvent, payload)
 export const onSeek = (observer: Observer<SeekPayload>) => subscribe(SeekEvent, observer)
 
-type Position = {
-  x: number
-  y: number
-}
-
-export type SpawnChickenEvent = {
+export const SpawnChickenEvent = Symbol('Game::SpawnChickenEvent')
+export type SpawnChickenPayload = {
   index: number
-  position: Position
+  position: {
+    x: number
+    y: number
+  }
 }
+export const emitSpawnChicken = (payload: SpawnChickenPayload) => publish(SpawnChickenEvent, payload)
+export const onSpawnChicken = (observer: Observer<SpawnChickenPayload>) => subscribe(SpawnChickenEvent, observer)
 
 export const LoadTrackEvent = Symbol('Game::LoadTrackEvent')
 export type LoadTrackPayload = {

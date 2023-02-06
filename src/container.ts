@@ -1,16 +1,11 @@
 import { Container } from 'inversify'
-import { Subject } from 'rxjs'
 import 'reflect-metadata'
 
 import * as usecase from './usecase'
-import * as events from './events'
 import * as types from './types'
 import * as repo from './repository'
 
 const container = new Container({ skipBaseClassChecks: true })
-
-// Events
-container.bind<Subject<events.SpawnChickenEvent>>(types.SpawnChickenEvent).toConstantValue(new Subject<events.SpawnChickenEvent>())
 
 // Repository
 container.bind<repo.IGameRepository>(types.IGameRepository).to(repo.InMemoryGameRepository).inSingletonScope()

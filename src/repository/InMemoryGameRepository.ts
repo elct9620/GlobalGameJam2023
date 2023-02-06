@@ -1,5 +1,4 @@
-import { Subject } from 'rxjs'
-import { inject, injectable } from 'inversify'
+import { injectable } from 'inversify'
 import 'reflect-metadata';
 
 import { IGameRepository } from './IGameRepository'
@@ -10,24 +9,14 @@ import {
   emitGameEnded,
   emitGameHitted,
   emitGameMissed,
-  SpawnChickenEvent,
+  emitSpawnChicken,
 } from '../events'
-import {
-  SpawnChickenEvent as SpawnChickenEventType,
-} from '../types'
 
 type GameCollection = { [key: string]: Game }
 
 @injectable()
 export class InMemoryGameRepository implements IGameRepository {
   private collection: GameCollection = {}
-  private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
-
-  constructor(
-    @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
-  ) {
-    this.evtSpawnChicken = evtSpawnChicken
-  }
 
   Find(id: string): Game {
     if(this.collection[id]) {
@@ -85,7 +74,7 @@ export class InMemoryGameRepository implements IGameRepository {
 
   CommitSpawn(game: Game, index: number) {
     const enemy = game.enemies[index]
-    this.evtSpawnChicken.next({ index, position: enemy.toPosition() })
+    emitSpawnChicken({ index, position: enemy.toPosition() })
   }
 
   SaveCaptured(game: Game, index: number) {

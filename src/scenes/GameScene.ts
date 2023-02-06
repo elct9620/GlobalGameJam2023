@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify'
-import { Subject, Subscription } from 'rxjs'
+import { Subscription } from 'rxjs'
 import * as PIXI from 'pixi.js'
 import 'reflect-metadata'
 import gsap from 'gsap'
@@ -19,15 +19,13 @@ import {
   onGameHit,
   onGameHitted,
   onGameMissed,
-  SpawnChickenEvent,
+  onSpawnChicken,
   emitSeek,
   emitLoadTrack,
   GameEndedPayload,
   GameHittedPayload,
+  SpawnChickenPayload,
 } from '../events'
-import {
-  SpawnChickenEvent as SpawnChickenEventType,
-} from '../types'
 
 import bgImg from '@/assets/bg.jpg';
 import groundImg from '@/assets/ground.png';
@@ -108,15 +106,12 @@ export class GameScene extends BaseScene {
   private _onSpawnChicken?: Subscription
 
   private readonly usecase: GameUseCase
-  private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
-    @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
     super()
     this.usecase = usecase
-    this.evtSpawnChicken = evtSpawnChicken
   }
 
   onCreated = () => {
@@ -203,7 +198,7 @@ export class GameScene extends BaseScene {
     this._onGameHit = onGameHit(this.onGameHit)
     this._onGameHitted = onGameHitted(this.onGameHitted)
     this._onGameMissed = onGameMissed(this.onGameMissed)
-    this._onSpawnChicken = this.evtSpawnChicken.subscribe(this.onSpawnChicken)
+    this._onSpawnChicken = onSpawnChicken(this.onSpawnChicken)
   }
 
   onUpdate = (delta: number) => {
@@ -269,7 +264,7 @@ export class GameScene extends BaseScene {
 
   onGameMissed = () => this.playSe('miss')
 
-  onSpawnChicken = (evt: SpawnChickenEvent) => {
+  onSpawnChicken = (evt: SpawnChickenPayload) => {
     const chicken = new Chicken(evt.position.x, evt.position.y)
     chicken.play()
     this._chickens[evt.index] = chicken
