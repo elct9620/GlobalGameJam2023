@@ -26,18 +26,23 @@ export type GameEndedPayload = {
   endedAt: number
   score: Score
 }
-
 export const emitGameEnded = (payload: GameEndedPayload) => publish(GameEndedEvent, payload)
 export const onGameEnded = (observer: Observer<GameEndedPayload>) => subscribe<GameEndedPayload>(GameEndedEvent, observer)
 
-export type GameHitEvent = {
+export const GameHitEvent = Symbol('Game::HitEvent')
+export type GameHitPayload = {
   id: string
 }
+export const emitGameHit = (payload: GameHitPayload) => publish(GameHitEvent, payload)
+export const onGameHit = (observer: Observer<GameHitPayload>) => subscribe<GameHitPayload>(GameHitEvent, observer)
 
-export type GameHittedEvent = {
+export const GameHittedEvent = Symbol('Game::HittedEvent')
+export type GameHittedPayload = {
   id: string,
   index: number
 }
+export const emitGameHitted = (payload: GameHittedPayload) => publish(GameHittedEvent, payload)
+export const onGameHitted = (observer: Observer<GameHittedPayload>) => subscribe<GameHittedPayload>(GameHittedEvent, observer)
 
 export type GameMissedEvent = {
   id: string

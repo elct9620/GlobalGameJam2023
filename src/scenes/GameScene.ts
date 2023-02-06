@@ -16,17 +16,16 @@ import { GameUseCase } from '../usecase'
 import {
   onGameStarted,
   onGameEnded,
-  GameHitEvent,
-  GameHittedEvent,
+  onGameHit,
+  onGameHitted,
   GameMissedEvent,
   SpawnChickenEvent,
   emitSeek,
   emitLoadTrack,
   GameEndedPayload,
+  GameHittedPayload,
 } from '../events'
 import {
-  GameHitEvent as GameHitEventType,
-  GameHittedEvent as GameHittedEventType,
   GameMissedEvent as GameMissedEventType,
   SpawnChickenEvent as SpawnChickenEventType,
 } from '../types'
@@ -110,22 +109,16 @@ export class GameScene extends BaseScene {
   private _onSpawnChicken?: Subscription
 
   private readonly usecase: GameUseCase
-  private readonly evtGameHit: Subject<GameHitEvent>
-  private readonly evtGameHitted: Subject<GameHittedEvent>
   private readonly evtGameMissed: Subject<GameMissedEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
-    @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
-    @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
     super()
     this.usecase = usecase
-    this.evtGameHit = evtGameHit
-    this.evtGameHitted = evtGameHitted
     this.evtGameMissed = evtGameMissed
     this.evtSpawnChicken = evtSpawnChicken
   }
@@ -211,8 +204,8 @@ export class GameScene extends BaseScene {
 
     this._onGameStarted = onGameStarted(this.onGameStarted)
     this._onGameEnded = onGameEnded(this.onGameEnded)
-    this.evtGameHit.subscribe(this.onGameHit)
-    this._onGameHitted = this.evtGameHitted.subscribe(this.onGameHitted)
+    this._onGameHit = onGameHit(this.onGameHit)
+    this._onGameHitted = onGameHitted(this.onGameHitted)
     this._onGameMissed = this.evtGameMissed.subscribe(this.onGameMissed)
     this._onSpawnChicken = this.evtSpawnChicken.subscribe(this.onSpawnChicken)
   }
@@ -267,7 +260,7 @@ export class GameScene extends BaseScene {
     this.potato?.cast()
   }
 
-  onGameHitted = (evt: GameHittedEvent) => {
+  onGameHitted = (evt: GameHittedPayload) => {
     this.playSe('hit')
     setTimeout(() => {
       const targetChicken: PIXI.AnimatedSprite | undefined = this._chickens[evt.index]
