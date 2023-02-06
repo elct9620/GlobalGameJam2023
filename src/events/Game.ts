@@ -20,11 +20,15 @@ type Score = {
   total: number
 }
 
-export type GameEndedEvent = {
+export const GameEndedEvent = Symbol('Game::GameEndedEvent')
+export type GameEndedPayload = {
   id: string
   endedAt: number
   score: Score
 }
+
+export const emitGameEnded = (payload: GameEndedPayload) => publish(GameEndedEvent, payload)
+export const onGameEnded = (observer: Observer<GameEndedPayload>) => subscribe<GameEndedPayload>(GameEndedEvent, observer)
 
 export type GameHitEvent = {
   id: string

@@ -15,16 +15,16 @@ import {
 import { GameUseCase } from '../usecase'
 import {
   onGameStarted,
-  GameEndedEvent,
+  onGameEnded,
   GameHitEvent,
   GameHittedEvent,
   GameMissedEvent,
   SpawnChickenEvent,
   emitSeek,
   emitLoadTrack,
+  GameEndedPayload,
 } from '../events'
 import {
-  GameEndedEvent as GameEndedEventType,
   GameHitEvent as GameHitEventType,
   GameHittedEvent as GameHittedEventType,
   GameMissedEvent as GameMissedEventType,
@@ -110,7 +110,6 @@ export class GameScene extends BaseScene {
   private _onSpawnChicken?: Subscription
 
   private readonly usecase: GameUseCase
-  private readonly evtGameEnded: Subject<GameEndedEvent>
   private readonly evtGameHit: Subject<GameHitEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
   private readonly evtGameMissed: Subject<GameMissedEvent>
@@ -118,7 +117,6 @@ export class GameScene extends BaseScene {
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
-    @inject(GameEndedEventType) evtGameEnded: Subject<GameEndedEvent>,
     @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
@@ -126,7 +124,6 @@ export class GameScene extends BaseScene {
   ) {
     super()
     this.usecase = usecase
-    this.evtGameEnded = evtGameEnded
     this.evtGameHit = evtGameHit
     this.evtGameHitted = evtGameHitted
     this.evtGameMissed = evtGameMissed
@@ -213,7 +210,7 @@ export class GameScene extends BaseScene {
     this.addChild(this.potato)
 
     this._onGameStarted = onGameStarted(this.onGameStarted)
-    this._onGameEnded = this.evtGameEnded.subscribe(this.onGameEnded)
+    this._onGameEnded = onGameEnded(this.onGameEnded)
     this.evtGameHit.subscribe(this.onGameHit)
     this._onGameHitted = this.evtGameHitted.subscribe(this.onGameHitted)
     this._onGameMissed = this.evtGameMissed.subscribe(this.onGameMissed)
@@ -253,7 +250,7 @@ export class GameScene extends BaseScene {
     }
   }
 
-  onGameEnded = (evt: GameEndedEvent) => {
+  onGameEnded = (evt: GameEndedPayload) => {
     this.endedTime = evt.endedAt
     const { captured, total } = evt.score
     const isWin = getIsWin(captured, total);
