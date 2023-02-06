@@ -4,15 +4,15 @@ import * as PIXI from 'pixi.js'
 import 'reflect-metadata'
 import gsap from 'gsap'
 
-import { loadAudioBuffer, encodeMidiFrom, AudioController } from '../utils'
+import { loadAudioBuffer, encodeMidiFrom, AudioController } from '../../utils'
 import { BaseScene } from './BaseScene'
 import {
   Chicken,
   HittedChicken,
   Root,
   Potato,
-} from './objects'
-import { GameUseCase } from '../core/usecase'
+} from '../entities'
+import { GameUseCase } from '../../core/usecase'
 import {
   onGameStarted,
   onGameEnded,
