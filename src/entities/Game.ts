@@ -11,9 +11,10 @@ export class Game {
 
   private _currentTrackID?: string;
   private _elapsedTime: number = 0
-  private _endedTime: number = 0
-  private _seekTime: number = 0
   private _seekIndex: number = 0
+  private _seekTime: number = 0
+  private _startedAt: number = 0
+  private _endedAt: number = 0
   private _state: GameState = GameState.Created
   private _enemies: Enemy[] = []
 
@@ -37,8 +38,12 @@ export class Game {
     return this._elapsedTime
   }
 
-  get endedTime(): number {
-    return this._endedTime
+  get startedAt(): number {
+    return this._startedAt
+  }
+
+  get endedAt(): number {
+    return this._endedAt
   }
 
   get seekTime(): number {
@@ -81,13 +86,14 @@ export class Game {
 
   start() {
     if(this.canStart) {
+      this._startedAt = Date.now()
       this._state = GameState.Started
     }
   }
 
   end() {
     if(this.mayEnded) {
-      this._endedTime = Date.now()
+      this._endedAt = Date.now()
       this._state = GameState.Ended
     }
   }

@@ -10,6 +10,7 @@ export const onGameCreated = (observer: Observer<GameCreatedPayload>) => subscri
 export const GameStartedEvent = Symbol('Game::StartedEvent')
 export type GameStartedPayload = {
   id: string
+  startedAt: number
 }
 export const emitGameStarted = (payload: GameStartedPayload) => publish(GameStartedEvent, payload)
 export const onGameStarted = (observer: Observer<GameStartedPayload>) => subscribe<GameStartedPayload>(GameStartedEvent, observer)

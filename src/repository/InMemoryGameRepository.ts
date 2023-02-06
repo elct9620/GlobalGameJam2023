@@ -39,7 +39,7 @@ export class InMemoryGameRepository implements IGameRepository {
   RefreshState(game: Game) {
     switch(game.state) {
       case GameState.Started:
-        emitGameStarted({ id: game.ID })
+        emitGameStarted({ id: game.ID, startedAt: game.startedAt })
         break
     }
   }
@@ -62,7 +62,7 @@ export class InMemoryGameRepository implements IGameRepository {
 
       emitGameEnded({
         id: game.ID,
-        endedAt: game.endedTime,
+        endedAt: game.endedAt,
         score: {
           captured: game.capturedCount,
           missed: game.missedCount,

@@ -22,6 +22,7 @@ import {
   onInput,
   emitSeek,
   emitLoadTrack,
+  GameStartedPayload,
   GameEndedPayload,
   GameHittedPayload,
   SpawnChickenPayload,
@@ -90,8 +91,8 @@ export class GameScene extends BaseScene {
   private bgm?: AudioBufferSourceNode;
   private sfx: Partial<Record<SFXName, AudioController>> = {};
 
-  private startedTime?: number
-  private endedTime?: number;
+  private startedAt?: number
+  private endedAt?: number;
   private finalScore?: { captured: number, total: number };
   private finalShowed: boolean = false;
 
@@ -204,11 +205,11 @@ export class GameScene extends BaseScene {
 
   onUpdate = (delta: number) => {
 
-    if (this.startedTime && !this.finalShowed) {
-      const deltaTime = (Date.now() - this.startedTime) / 1000
+    if (this.startedAt && !this.finalShowed) {
+      const deltaTime = (Date.now() - this.startedAt) / 1000
       emitSeek({ currentTime: deltaTime * 1000 })
 
-      const slowDown = this.endedTime ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedTime)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
+      const slowDown = this.endedAt ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedAt)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
       if (slowDown <= 0) { this.showFinal() }
       const groundSpeed = delta * 3 * TRACK_SCALE * slowDown;
       if (this.ground) {
@@ -223,8 +224,8 @@ export class GameScene extends BaseScene {
     }
   }
 
-  onGameStarted = () => {
-    this.startedTime = Date.now()
+  onGameStarted = (evt: GameStartedPayload) => {
+    this.startedAt = evt.startedAt
     this.bgm?.start()
     this.playSe('show')
 
@@ -236,7 +237,7 @@ export class GameScene extends BaseScene {
   }
 
   onGameEnded = (evt: GameEndedPayload) => {
-    this.endedTime = evt.endedAt
+    this.endedAt = evt.endedAt
     const { captured, total } = evt.score
     const isWin = getIsWin(captured, total);
     this.finalScore = { captured, total };
