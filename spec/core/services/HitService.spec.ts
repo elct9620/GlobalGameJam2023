@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { Game } from '../../../src/core/entities'
-import { HitService } from '../../../src/core/services'
+import { Game } from '@/core/entities'
+import { HitService } from '@/core/services'
 
 interface HitServiceContext {
   game: Game

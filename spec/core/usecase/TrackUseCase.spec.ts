@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { TrackUseCase } from '../../../src/core/usecase'
-import Container from '../../../src/container'
+import { TrackUseCase } from '@/core/usecase'
+import Container from '@/container'
 
 interface TrackUseCaseContext {
   usecase: TrackUseCase

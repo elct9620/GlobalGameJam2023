@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { Game } from '../../../src/core/entities'
-import { SeekService } from '../../../src/core/services'
+import { Game } from '@/core/entities'
+import { SeekService } from '@/core/services'
 
 interface SeekServiceContext {
   game: Game

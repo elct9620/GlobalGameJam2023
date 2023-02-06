@@ -1,8 +1,8 @@
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
-import { PlayerID } from '../../../src/core/types'
-import { SessionUseCase } from '../../../src/core/usecase'
-import Container from '../../../src/container'
+import { PlayerID } from '@/core/types'
+import { SessionUseCase } from '@/core/usecase'
+import Container from '@/container'
 
 interface SessionUseCaseContext {
   usecase: SessionUseCase
