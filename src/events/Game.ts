@@ -14,17 +14,15 @@ export type GameStartedPayload = {
 export const emitGameStarted = (payload: GameStartedPayload) => publish(GameStartedEvent, payload)
 export const onGameStarted = (observer: Observer<GameStartedPayload>) => subscribe<GameStartedPayload>(GameStartedEvent, observer)
 
-type Score = {
-  captured: number
-  missed: number
-  total: number
-}
-
 export const GameEndedEvent = Symbol('Game::GameEndedEvent')
 export type GameEndedPayload = {
   id: string
   endedAt: number
-  score: Score
+  score: {
+    captured: number
+    missed: number
+    total: number
+  }
 }
 export const emitGameEnded = (payload: GameEndedPayload) => publish(GameEndedEvent, payload)
 export const onGameEnded = (observer: Observer<GameEndedPayload>) => subscribe<GameEndedPayload>(GameEndedEvent, observer)
@@ -66,14 +64,10 @@ export type SpawnChickenEvent = {
   position: Position
 }
 
-type Note = {
-  time: number
-}
-
 export const LoadTrackEvent = Symbol('Game::LoadTrackEvent')
 export type LoadTrackPayload = {
   id: string
-  notes: Note[]
+  notes: { time: number }[]
 }
 export const emitLoadTrack = (payload: LoadTrackPayload) => publish(LoadTrackEvent, payload)
 export const onLoadTrack = (observer: Observer<LoadTrackPayload>) => subscribe(LoadTrackEvent, observer)

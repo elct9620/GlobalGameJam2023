@@ -1,11 +1,10 @@
-import { Subject } from 'rxjs'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata';
 import * as uuid from 'uuid';
 
 import type { IGameRepository, ITrackRepository } from '../repository'
 import { HitService, SeekService } from '../services'
-import { GameHitEvent } from '../events'
+import { emitGameHit } from '../events'
 import * as types from '../types'
 
 export type HitResult = {
@@ -25,16 +24,13 @@ export class GameUseCase {
 
   private readonly gameRepo: IGameRepository
   private readonly trackRepo: ITrackRepository
-  private readonly evtGameHit: Subject<GameHitEvent>
 
   constructor(
     @inject(types.IGameRepository) gameRepo: IGameRepository,
     @inject(types.ITrackRepository) trackRepo: ITrackRepository,
-    @inject(types.GameHitEvent) evtGameHit: Subject<GameHitEvent>,
   ) {
     this.gameRepo = gameRepo
     this.trackRepo = trackRepo
-    this.evtGameHit = evtGameHit
   }
 
   CreateGame(): string {
@@ -69,7 +65,7 @@ export class GameUseCase {
         this.gameRepo.SaveCaptured(game, index)
       }
 
-      this.evtGameHit.next({ id })
+      emitGameHit({ id })
 
       return { type: 'action', meta: { index } }
     }
