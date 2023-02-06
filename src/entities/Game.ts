@@ -12,7 +12,6 @@ export class Game {
   private _currentTrackID?: string;
   private _elapsedTime: number = 0
   private _seekIndex: number = 0
-  private _seekTime: number = 0
   private _startedAt: number = 0
   private _endedAt: number = 0
   private _state: GameState = GameState.Created
@@ -47,7 +46,7 @@ export class Game {
   }
 
   get seekTime(): number {
-    return this._seekTime
+    return Date.now() - this._startedAt
   }
 
   get seekIndex(): number {
@@ -102,12 +101,6 @@ export class Game {
     if(!this.isStarted) return -1
 
     return this._elapsedTime += delta
-  }
-
-  seekTo(currentTime: number): number {
-    if(!this.isStarted) return -1
-
-    return this._seekTime = currentTime
   }
 
   updateSeekState(index: number): number {

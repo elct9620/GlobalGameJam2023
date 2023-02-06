@@ -12,7 +12,6 @@ export type HitResult = {
 }
 
 export type SeekResult = {
-  time: number,
   index: number
 }
 
@@ -58,7 +57,7 @@ export class GameUseCase {
 
     if(game.canAction) {
       const service = new HitService(game, GameUseCase.TOLERATE_EARLY, GameUseCase.TOLERATE_LATER)
-      const target = service.findHittedEnemy()
+      const target = service.findHittedEnemy(game.seekTime)
       const index = game.capture(target)
       if(index >= 0) {
         this.gameRepo.SaveCaptured(game, index)
@@ -74,7 +73,6 @@ export class GameUseCase {
     const game = this.gameRepo.Find(id)
     if(game.isStarted) {
       const service = new SeekService(game, GameUseCase.TOLERATE_LATER)
-      const time = game.seekTo(currentTime)
 
       const currentIndex = game.seekIndex
       const index = service.findSeekIndex(currentTime)
@@ -86,10 +84,10 @@ export class GameUseCase {
       }
       this.gameRepo.RefreshSeekState(game, missed)
 
-      return { time, index }
+      return { index }
     }
 
-    return { time: 0, index: -1 }
+    return { index: -1 }
   }
 
   SpawnChicken(id: string): number {

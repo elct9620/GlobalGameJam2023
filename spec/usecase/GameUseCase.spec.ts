@@ -40,23 +40,9 @@ describe('elapse game time', () => {
 })
 
 describe('seek time', () => {
-  it<GameUseCaseContext>('is expected to have time 0', (ctx) => {
-    const id = ctx.usecase.CreateGame()
-    expect(ctx.usecase.SyncSeek(id, 1)).toHaveProperty('time', 0)
-  })
-
   it<GameUseCaseContext>('is expected to have index -1', (ctx) => {
     const id = ctx.usecase.CreateGame()
     expect(ctx.usecase.SyncSeek(id, 1)).toHaveProperty('index', -1)
-  })
-
-  describe('when game started', () => {
-    it<GameUseCaseContext>('is expected to have time 1', (ctx) => {
-      const id = ctx.usecase.CreateGame()
-      ctx.usecase.SetTrack(id, 'Music.mid')
-      ctx.usecase.Hit(id)
-      expect(ctx.usecase.SyncSeek(id, 1)).toHaveProperty('time', 1)
-    })
   })
 
   describe('when index is changed', () => {

@@ -11,13 +11,12 @@ export class HitService {
     this.tolerateLater = tolerateLater
   }
 
-  findHittedEnemy(): number {
+  findHittedEnemy(seekTime: number): number {
     const enemies = this.game.enemies
-    const currentTime = this.game.seekTime
 
     for(let index in enemies) {
       const enemy = enemies[index]
-      if(this.isHitted(enemy, currentTime)) {
+      if(this.isHitted(enemy, seekTime)) {
         return Number(index)
       }
     }
@@ -25,9 +24,9 @@ export class HitService {
     return -1
   }
 
-  private isHitted(enemy: Enemy, currentTime: number): boolean {
-    return currentTime - this.tolerateEarly <= enemy.time &&
-           currentTime + this.tolerateLater >= enemy.time &&
+  private isHitted(enemy: Enemy, seekTime: number): boolean {
+    return seekTime - this.tolerateEarly <= enemy.time &&
+           seekTime + this.tolerateLater >= enemy.time &&
            !enemy.captured
   }
 }
