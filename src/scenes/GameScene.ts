@@ -277,7 +277,7 @@ export class GameScene extends BaseScene {
   onDestroyed = () => {
     this._onGameStarted?.unsubscribe()
     this._onGameEnded?.unsubscribe()
-    this._onGameHit?.unsubscribe()
+    this._onInput?.unsubscribe()
     this._onGameHitted?.unsubscribe()
     this._onGameMissed?.unsubscribe()
     this._onSpawnChicken?.unsubscribe()
