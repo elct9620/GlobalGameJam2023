@@ -6,14 +6,13 @@ import { IGameRepository } from './IGameRepository'
 import { Game, GameState } from '../entities'
 import {
   emitGameCreated,
-  GameStartedEvent,
+  emitGameStarted,
   GameEndedEvent,
   GameHittedEvent,
   GameMissedEvent,
   SpawnChickenEvent,
 } from '../events'
 import {
-  GameStartedEvent as GameStartedEventType,
   GameEndedEvent as GameEndedEventType,
   GameHittedEvent as GameHittedEventType,
   GameMissedEvent as GameMissedEventType,
@@ -25,20 +24,17 @@ type GameCollection = { [key: string]: Game }
 @injectable()
 export class InMemoryGameRepository implements IGameRepository {
   private collection: GameCollection = {}
-  private readonly evtGameStarted: Subject<GameStartedEvent>
   private readonly evtGameEnded: Subject<GameEndedEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
   private readonly evtGameMissed: Subject<GameMissedEvent>
   private readonly evtSpawnChicken: Subject<SpawnChickenEvent>
 
   constructor(
-    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
     @inject(GameEndedEventType) evtGameEnded: Subject<GameEndedEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
     @inject(GameMissedEventType) evtGameMissed: Subject<GameMissedEvent>,
     @inject(SpawnChickenEventType) evtSpawnChicken: Subject<SpawnChickenEvent>,
   ) {
-    this.evtGameStarted = evtGameStarted
     this.evtGameEnded = evtGameEnded
     this.evtGameHitted = evtGameHitted
     this.evtGameMissed = evtGameMissed
@@ -66,7 +62,7 @@ export class InMemoryGameRepository implements IGameRepository {
   RefreshState(game: Game) {
     switch(game.state) {
       case GameState.Started:
-        this.evtGameStarted.next({ id: game.ID })
+        emitGameStarted({ id: game.ID })
         break
     }
   }

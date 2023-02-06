@@ -2,7 +2,6 @@
 export const PlayerID = Symbol('PlayerID')
 
 // Event
-export const GameStartedEvent = Symbol('GameStartedEvent')
 export const GameEndedEvent = Symbol('GameEndedEvent')
 export const GameHitEvent = Symbol('GameHitEvent')
 export const GameHittedEvent = Symbol('GameHittedEvent')

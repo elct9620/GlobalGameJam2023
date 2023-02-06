@@ -2,11 +2,11 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { Observer } from 'rxjs'
 
-import { GameStartedEvent } from '../events'
+import { GameStartedPayload } from '../events'
 import { GameUseCase, SessionUseCase } from '../usecase'
 
 @injectable()
-export class GameStartedSubscriber implements Observer<GameStartedEvent> {
+export class GameStartedSubscriber implements Observer<GameStartedPayload> {
   private readonly game: GameUseCase;
   private readonly session: SessionUseCase;
 
@@ -18,7 +18,7 @@ export class GameStartedSubscriber implements Observer<GameStartedEvent> {
     this.session = session
   }
 
-  next(_event: GameStartedEvent) {
+  next(_event: GameStartedPayload) {
     const id = this.session.CurrentGameID()
     if(id) {
       this.game.SpawnChicken(id)

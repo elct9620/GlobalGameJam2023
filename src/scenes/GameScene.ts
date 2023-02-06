@@ -14,7 +14,7 @@ import {
 } from './objects'
 import { GameUseCase } from '../usecase'
 import {
-  GameStartedEvent,
+  onGameStarted,
   GameEndedEvent,
   GameHitEvent,
   GameHittedEvent,
@@ -24,7 +24,6 @@ import {
   emitSeek,
 } from '../events'
 import {
-  GameStartedEvent as GameStartedEventType,
   GameEndedEvent as GameEndedEventType,
   GameHitEvent as GameHitEventType,
   GameHittedEvent as GameHittedEventType,
@@ -112,7 +111,6 @@ export class GameScene extends BaseScene {
   private _onSpawnChicken?: Subscription
 
   private readonly usecase: GameUseCase
-  private readonly evtGameStarted: Subject<GameStartedEvent>
   private readonly evtGameEnded: Subject<GameEndedEvent>
   private readonly evtGameHit: Subject<GameHitEvent>
   private readonly evtGameHitted: Subject<GameHittedEvent>
@@ -122,7 +120,6 @@ export class GameScene extends BaseScene {
 
   constructor(
     @inject(GameUseCase) usecase: GameUseCase,
-    @inject(GameStartedEventType) evtGameStarted: Subject<GameStartedEvent>,
     @inject(GameEndedEventType) evtGameEnded: Subject<GameEndedEvent>,
     @inject(GameHitEventType) evtGameHit: Subject<GameHitEvent>,
     @inject(GameHittedEventType) evtGameHitted: Subject<GameHittedEvent>,
@@ -132,7 +129,6 @@ export class GameScene extends BaseScene {
   ) {
     super()
     this.usecase = usecase
-    this.evtGameStarted = evtGameStarted
     this.evtGameEnded = evtGameEnded
     this.evtGameHit = evtGameHit
     this.evtGameHitted = evtGameHitted
@@ -220,7 +216,7 @@ export class GameScene extends BaseScene {
     this.potato = new Potato(1100, 150)
     this.addChild(this.potato)
 
-    this._onGameStarted = this.evtGameStarted.subscribe(this.onGameStarted)
+    this._onGameStarted = onGameStarted(this.onGameStarted)
     this._onGameEnded = this.evtGameEnded.subscribe(this.onGameEnded)
     this.evtGameHit.subscribe(this.onGameHit)
     this._onGameHitted = this.evtGameHitted.subscribe(this.onGameHitted)
