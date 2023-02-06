@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi} from 'vitest'
 
 import { GameUseCase, TrackUseCase } from '../../src/usecase'
 import Container from '../../src/container'
@@ -39,10 +39,10 @@ describe('elapse game time', () => {
   })
 })
 
-describe('seek time', () => {
+describe('check miss', () => {
   it<GameUseCaseContext>('is expected to have index -1', (ctx) => {
     const id = ctx.usecase.CreateGame()
-    expect(ctx.usecase.SyncSeek(id, 1)).toHaveProperty('index', -1)
+    expect(ctx.usecase.CheckMissed(id)).toHaveProperty('index', -1)
   })
 
   describe('when index is changed', () => {
@@ -50,12 +50,16 @@ describe('seek time', () => {
       const track = Container.resolve<TrackUseCase>(TrackUseCase)
       track.Load('Music.mid', [{ time: 2500 }, { time: 4000}])
 
+      vi.useFakeTimers()
+      vi.setSystemTime('2023-02-07 00:00:00')
+
       const id = ctx.usecase.CreateGame()
       ctx.usecase.SetTrack(id, 'Music.mid')
       ctx.usecase.Hit(id)
       ctx.usecase.SpawnChicken(id)
 
-      expect(ctx.usecase.SyncSeek(id, 5000)).toHaveProperty('index', 1)
+      vi.setSystemTime('2023-02-07 00:00:05')
+      expect(ctx.usecase.CheckMissed(id)).toHaveProperty('index', 1)
     })
   })
 })

@@ -8,5 +8,4 @@ events.onInput(Container.resolve<subscribers.InputSubscriber>(subscribers.InputS
 events.onGameCreated(Container.resolve<subscribers.GameCreatedSubscriber>(subscribers.GameCreatedSubscriber))
 events.onGameStarted(Container.resolve<subscribers.GameStartedSubscriber>(subscribers.GameStartedSubscriber))
 
-events.onSeek(Container.resolve<subscribers.SeekSubscriber>(subscribers.SeekSubscriber))
 events.onLoadTrack(Container.resolve<subscribers.LoadTrackSubscriber>(subscribers.LoadTrackSubscriber))

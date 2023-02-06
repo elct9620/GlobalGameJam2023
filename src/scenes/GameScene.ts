@@ -20,7 +20,6 @@ import {
   onGameMissed,
   onSpawnChicken,
   onInput,
-  emitSeek,
   emitLoadTrack,
   GameStartedPayload,
   GameEndedPayload,
@@ -207,7 +206,6 @@ export class GameScene extends BaseScene {
 
     if (this.startedAt && !this.finalShowed) {
       const deltaTime = (Date.now() - this.startedAt) / 1000
-      emitSeek({ currentTime: deltaTime * 1000 })
 
       const slowDown = this.endedAt ? Math.max((ENDED_SLOW_DOWN_DURATION - (Date.now() - this.endedAt)) / ENDED_SLOW_DOWN_DURATION, 0) : 1
       if (slowDown <= 0) { this.showFinal() }

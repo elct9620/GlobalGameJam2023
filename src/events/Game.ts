@@ -44,13 +44,6 @@ export type GameMissedPayload = {
 export const emitGameMissed = (payload: GameMissedPayload) => publish(GameMissedEvent, payload)
 export const onGameMissed = (observer: Observer<GameMissedPayload>) => subscribe<GameMissedPayload>(GameMissedEvent, observer)
 
-export const SeekEvent = Symbol('Game::SeekEvent')
-export type SeekPayload = {
-  currentTime: number
-}
-export const emitSeek = (payload: SeekPayload) => publish(SeekEvent, payload)
-export const onSeek = (observer: Observer<SeekPayload>) => subscribe(SeekEvent, observer)
-
 export const SpawnChickenEvent = Symbol('Game::SpawnChickenEvent')
 export type SpawnChickenPayload = {
   index: number

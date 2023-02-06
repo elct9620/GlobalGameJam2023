@@ -11,8 +11,9 @@ export type HitResult = {
   meta?: { [key: string]: any }
 }
 
-export type SeekResult = {
+export type CheckMissedResult = {
   index: number
+  missed: number
 }
 
 @injectable()
@@ -69,13 +70,13 @@ export class GameUseCase {
     return { type: 'error' }
   }
 
-  SyncSeek(id: string, currentTime: number): SeekResult {
+  CheckMissed(id: string): CheckMissedResult {
     const game = this.gameRepo.Find(id)
     if(game.isStarted) {
       const service = new SeekService(game, GameUseCase.TOLERATE_LATER)
 
       const currentIndex = game.seekIndex
-      const index = service.findSeekIndex(currentTime)
+      const index = service.findSeekIndex(game.seekTime)
       const missed: number[] = service.findMissed(currentIndex, index)
 
       game.updateSeekState(index)
@@ -84,10 +85,10 @@ export class GameUseCase {
       }
       this.gameRepo.RefreshSeekState(game, missed)
 
-      return { index }
+      return { index, missed: missed.length }
     }
 
-    return { index: -1 }
+    return { index: -1, missed: 0 }
   }
 
   SpawnChicken(id: string): number {
