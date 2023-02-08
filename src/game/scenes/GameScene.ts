@@ -39,7 +39,7 @@ import finishPanelImg from '@/assets/finish_panel.png';
 import againBtnImg from '@/assets/again_btn.png';
 
 import {
-  bgmOgg, notesMidi,
+  bgmOgg,
 
   seChickenHitOgg1, seChickenHitOgg2, seChickenHitOgg3, seChickenHitOgg4,
   seChickenMissOgg1, seChickenMissOgg2,
@@ -47,7 +47,9 @@ import {
   seUsShowOgg1, seUsShowOgg2, seUsShowOgg3, seUsHitGetOgg1,
   seUsHit1, seUsHit2,
   bgmFinishWinOgg1, bgmFinishLoseOgg2,
-} from '@/assets/ogg/'
+} from '@/assets/mp3/'
+
+import { notesMidi } from '@/assets/ogg/'
 
 type SFXName = 'miss' | 'hit' | 'show' | 'cast' | 'win' | 'lose'
 
