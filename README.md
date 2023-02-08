@@ -37,5 +37,5 @@ All events should convert to `Domain Event` and use RxJS to publish to each doma
 
 | Path              | Description                                 |
 |-------------------|---------------------------------------------|
-| `@/game/scenes    | the scene similar to usecase                |
+| `@/game/scenes`   | the scene similar to usecase                |
 | `@/game/entities` | the game object which managed display state |
